@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .agent-nav { background: var(--blue); padding: 15px 0; }
+        .agent-nav .container { display: flex; justify-content: space-between; align-items: center; }
+        .agent-nav a { color: white; text-decoration: none; margin-right: 20px; }
+    </style>
+</head>
+<body>
+    <nav class="agent-nav">
+        <div class="container">
+            <div>
+                <a href="/agent-portal/dashboard">Dashboard</a>
+                <a href="/agent-portal/leads">My Leads</a>
+                <a href="/agent-portal/settings"><strong>Settings</strong></a>
+                <a href="/agent-portal/embed">Embed Code</a>
+            </div>
+            <a href="/agent-portal/logout">Logout</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="mb-3">Profile Settings</h1>
+
+            <% if (success) { %>
+                <div class="alert alert-success"><%= success %></div>
+            <% } %>
+
+            <div class="card" style="max-width: 600px;">
+                <form action="/agent-portal/settings" method="POST">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text" name="first_name" class="form-input" value="<%= agent.first_name %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" name="last_name" class="form-input" value="<%= agent.last_name %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" name="phone" class="form-input" value="<%= agent.phone || '' %>">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Brokerage</label>
+                        <input type="text" name="brokerage" class="form-input" value="<%= agent.brokerage || '' %>">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Website</label>
+                        <input type="url" name="website" class="form-input" value="<%= agent.website || '' %>">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bio</label>
+                        <textarea name="bio" class="form-textarea" rows="4"><%= agent.bio || '' %></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Facebook URL</label>
+                        <input type="url" name="facebook_url" class="form-input" value="<%= agent.facebook_url || '' %>">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Instagram URL</label>
+                        <input type="url" name="instagram_url" class="form-input" value="<%= agent.instagram_url || '' %>">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">LinkedIn URL</label>
+                        <input type="url" name="linkedin_url" class="form-input" value="<%= agent.linkedin_url || '' %>">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

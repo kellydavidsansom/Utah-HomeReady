@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .admin-nav { background: var(--dark); padding: 15px 0; }
+        .admin-nav .container { display: flex; justify-content: space-between; align-items: center; }
+        .admin-nav a { color: white; text-decoration: none; margin-right: 20px; }
+    </style>
+</head>
+<body>
+    <nav class="admin-nav">
+        <div class="container">
+            <div>
+                <a href="/admin/dashboard"><strong>Admin</strong></a>
+                <a href="/admin/leads">Leads</a>
+                <a href="/admin/agents">Agents</a>
+            </div>
+            <a href="/admin/logout">Logout</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="mb-3"><%= agent.first_name %> <%= agent.last_name %></h1>
+
+            <div class="card mb-3">
+                <form action="/admin/agents/<%= agent.id %>" method="POST">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text" name="first_name" class="form-input" value="<%= agent.first_name %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" name="last_name" class="form-input" value="<%= agent.last_name %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-input" value="<%= agent.email %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" name="phone" class="form-input" value="<%= agent.phone || '' %>">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Brokerage</label>
+                        <input type="text" name="brokerage" class="form-input" value="<%= agent.brokerage || '' %>">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Website</label>
+                        <input type="url" name="website" class="form-input" value="<%= agent.website || '' %>">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bio</label>
+                        <textarea name="bio" class="form-textarea" rows="3"><%= agent.bio || '' %></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+
+            <p><strong>Agent Link:</strong> <a href="/agent/<%= agent.slug %>" target="_blank">/agent/<%= agent.slug %></a></p>
+        </div>
+    </main>
+</body>
+</html>

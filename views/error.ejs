@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <%- include('partials/header', { agent: null }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="card" style="max-width: 500px; margin: 60px auto; text-align: center;">
+                <h1 class="mb-2"><%= title %></h1>
+                <p style="color: var(--gray);"><%= message %></p>
+                <a href="/" class="btn btn-primary mt-3">Go Home</a>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .agent-nav { background: var(--blue); padding: 15px 0; }
+        .agent-nav .container { display: flex; justify-content: space-between; align-items: center; }
+        .agent-nav a { color: white; text-decoration: none; margin-right: 20px; }
+        .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .detail-section { background: var(--white); padding: 20px; border-radius: 8px; }
+        .detail-section h3 { margin-bottom: 15px; }
+        .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--bg); }
+        .status-badge { display: inline-block; padding: 8px 20px; border-radius: 20px; font-weight: 600; color: white; }
+        .status-badge.green { background: var(--green); }
+        .status-badge.yellow { background: var(--yellow); }
+        .status-badge.red { background: var(--red); }
+    </style>
+</head>
+<body>
+    <nav class="agent-nav">
+        <div class="container">
+            <div>
+                <a href="/agent-portal/dashboard">Dashboard</a>
+                <a href="/agent-portal/leads">My Leads</a>
+                <a href="/agent-portal/settings">Settings</a>
+                <a href="/agent-portal/embed">Embed Code</a>
+            </div>
+            <a href="/agent-portal/logout">Logout</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div style="margin-bottom: 30px;">
+                <h1><%= lead.first_name %> <%= lead.last_name %></h1>
+                <% if (lead.readiness_level) { %>
+                    <span class="status-badge <%= lead.readiness_level %>"><%= lead.readiness_level.toUpperCase() %> - Score: <%= lead.readiness_score %></span>
+                <% } %>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-section">
+                    <h3>Contact Info</h3>
+                    <div class="detail-row"><span>Email</span><span><a href="mailto:<%= lead.email %>"><%= lead.email %></a></span></div>
+                    <div class="detail-row"><span>Phone</span><span><a href="tel:<%= lead.phone %>"><%= lead.phone || '-' %></a></span></div>
+                    <div class="detail-row"><span>Timeline</span><span><%= lead.timeline %></span></div>
+                    <div class="detail-row"><span>Counties</span><span><%= targetCounties.join(', ') || '-' %></span></div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>Affordability</h3>
+                    <div class="detail-row" style="color: var(--green);"><span>Comfortable</span><span>$<%= (lead.comfortable_price || 0).toLocaleString() %></span></div>
+                    <div class="detail-row" style="color: var(--yellow);"><span>Stretch</span><span>$<%= (lead.stretch_price || 0).toLocaleString() %></span></div>
+                    <div class="detail-row" style="color: var(--red);"><span>Strained</span><span>$<%= (lead.strained_price || 0).toLocaleString() %></span></div>
+                </div>
+            </div>
+
+            <% if (lead.ai_summary) { %>
+                <div class="detail-section mt-3">
+                    <h3>Summary</h3>
+                    <p><%= lead.ai_summary %></p>
+                </div>
+            <% } %>
+        </div>
+    </main>
+</body>
+</html>

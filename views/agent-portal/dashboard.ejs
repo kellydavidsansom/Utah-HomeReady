@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .agent-nav { background: var(--blue); padding: 15px 0; }
+        .agent-nav .container { display: flex; justify-content: space-between; align-items: center; }
+        .agent-nav a { color: white; text-decoration: none; margin-right: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: var(--white); padding: 20px; border-radius: 8px; text-align: center; }
+        .stat-card .number { font-size: 2.5rem; font-weight: 700; }
+        .stat-card .label { color: var(--gray); font-size: 0.875rem; }
+        .stat-card.green .number { color: var(--green); }
+        .stat-card.yellow .number { color: var(--yellow); }
+        .stat-card.red .number { color: var(--red); }
+    </style>
+</head>
+<body>
+    <nav class="agent-nav">
+        <div class="container">
+            <div>
+                <a href="/agent-portal/dashboard"><strong>Dashboard</strong></a>
+                <a href="/agent-portal/leads">My Leads</a>
+                <a href="/agent-portal/settings">Settings</a>
+                <a href="/agent-portal/embed">Embed Code</a>
+            </div>
+            <a href="/agent-portal/logout">Logout</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="mb-3">Welcome, <%= agent.first_name %>!</h1>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="number"><%= stats.total || 0 %></div>
+                    <div class="label">Total Leads</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="number"><%= stats.green || 0 %></div>
+                    <div class="label">Green Light</div>
+                </div>
+                <div class="stat-card yellow">
+                    <div class="number"><%= stats.yellow || 0 %></div>
+                    <div class="label">Yellow Light</div>
+                </div>
+                <div class="stat-card red">
+                    <div class="number"><%= stats.red || 0 %></div>
+                    <div class="label">Red Light</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="mb-2">Your Assessment Link</h3>
+                <p>Share this link with potential buyers:</p>
+                <code style="display: block; background: var(--bg); padding: 15px; border-radius: 8px; margin-top: 10px;">
+                    <%= locals.baseUrl %>/agent/<%= agent.slug %>
+                </code>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

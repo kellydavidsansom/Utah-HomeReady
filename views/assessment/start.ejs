@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <%- include('../partials/header', { agent }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="hero">
+                <% if (agent.headshot_url) { %>
+                    <img src="<%= agent.headshot_url %>" alt="<%= agent.first_name %>" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 20px;">
+                <% } %>
+
+                <h1>Hi! I'm <%= agent.first_name %>.</h1>
+                <p>Let's see how ready you are to buy a home in Utah. This quick assessment takes about 3-5 minutes.</p>
+            </div>
+
+            <div class="card" style="max-width: 600px; margin: 0 auto; text-align: center;">
+                <h2 class="mb-2">What You'll Discover</h2>
+
+                <div style="text-align: left; margin-bottom: 30px;">
+                    <div class="action-item">
+                        <div class="action-item-icon" style="background: var(--green);">&#10003;</div>
+                        <div class="action-item-content">
+                            <h4>Your Home Buying Readiness</h4>
+                            <p>Get a clear picture of where you stand</p>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-item-icon" style="background: var(--blue);">$</div>
+                        <div class="action-item-content">
+                            <h4>Your Estimated Price Range</h4>
+                            <p>Know what you can comfortably afford</p>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-item-icon" style="background: var(--yellow);">&#9998;</div>
+                        <div class="action-item-content">
+                            <h4>Your Personalized Action Plan</h4>
+                            <p>Clear next steps based on your situation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form action="/agent/<%= agent.slug %>/start" method="POST">
+                    <button type="submit" class="btn btn-primary btn-large btn-block">
+                        Let's Get Started
+                    </button>
+                </form>
+
+                <p class="mt-2" style="font-size: 0.875rem; color: var(--gray);">
+                    Your information is kept confidential and secure.
+                </p>
+            </div>
+
+            <% if (agent.bio) { %>
+                <div class="card" style="max-width: 600px; margin: 30px auto 0; text-align: center;">
+                    <h3 class="mb-1">About <%= agent.first_name %></h3>
+                    <p style="color: var(--gray);"><%= agent.bio %></p>
+
+                    <div class="mt-2">
+                        <% if (agent.phone) { %>
+                            <p><%= agent.phone %></p>
+                        <% } %>
+                        <p><a href="mailto:<%= agent.email %>"><%= agent.email %></a></p>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

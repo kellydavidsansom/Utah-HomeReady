@@ -1,0 +1,19 @@
+<header class="site-header">
+    <div class="container">
+        <a href="/" class="logo">
+            <% if (agent && agent.logo_url) { %>
+                <img src="<%= agent.logo_url %>" alt="<%= agent.first_name %> <%= agent.last_name %>" class="agent-logo">
+            <% } else { %>
+                <span class="logo-text">Utah Home Ready Check</span>
+            <% } %>
+        </a>
+        <% if (agent) { %>
+            <div class="agent-info">
+                <span class="agent-name"><%= agent.first_name %> <%= agent.last_name %></span>
+                <% if (agent.brokerage) { %>
+                    <span class="agent-brokerage"><%= agent.brokerage %></span>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+</header>

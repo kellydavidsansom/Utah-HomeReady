@@ -1,0 +1,29 @@
+{
+  "name": "utah-homeready",
+  "version": "1.0.0",
+  "description": "Utah Home Ready Check - Lead qualification tool for real estate agents",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["mortgage", "real-estate", "lead-qualification", "utah"],
+  "author": "ClearPath Utah Mortgage",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.2",
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.5.0",
+    "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
+    "express": "^5.2.1",
+    "express-session": "^1.18.2",
+    "form-data": "^4.0.5",
+    "googleapis": "^169.0.0",
+    "mailgun.js": "^12.4.0",
+    "multer": "^2.0.2",
+    "pdfkit": "^0.17.2",
+    "uuid": "^13.0.0"
+  }
+}

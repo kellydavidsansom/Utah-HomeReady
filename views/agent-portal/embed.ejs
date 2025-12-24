@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .agent-nav { background: var(--blue); padding: 15px 0; }
+        .agent-nav .container { display: flex; justify-content: space-between; align-items: center; }
+        .agent-nav a { color: white; text-decoration: none; margin-right: 20px; }
+        .code-block { background: var(--dark); color: #a5d6ff; padding: 20px; border-radius: 8px; overflow-x: auto; font-family: monospace; font-size: 0.875rem; white-space: pre-wrap; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <nav class="agent-nav">
+        <div class="container">
+            <div>
+                <a href="/agent-portal/dashboard">Dashboard</a>
+                <a href="/agent-portal/leads">My Leads</a>
+                <a href="/agent-portal/settings">Settings</a>
+                <a href="/agent-portal/embed"><strong>Embed Code</strong></a>
+            </div>
+            <a href="/agent-portal/logout">Logout</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="mb-3">Embed Code for Your Website</h1>
+
+            <div class="card mb-3">
+                <h3 class="mb-2">Your Assessment Link</h3>
+                <p>Share this link directly with potential buyers:</p>
+                <code style="display: block; background: var(--bg); padding: 15px; border-radius: 8px; margin-top: 10px;">
+                    <%= baseUrl %>/agent/<%= agent.slug %>
+                </code>
+            </div>
+
+            <div class="card mb-3">
+                <h3 class="mb-2">Embed as iFrame</h3>
+                <p>Add this code to your website to embed the assessment:</p>
+                <div class="code-block">&lt;iframe
+    src="<%= baseUrl %>/agent/<%= agent.slug %>/embed"
+    width="100%"
+    height="700"
+    frameborder="0"
+    style="border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"&gt;
+&lt;/iframe&gt;</div>
+            </div>
+
+            <div class="card">
+                <h3 class="mb-2">Add as Button</h3>
+                <p>Or add a button that links to your assessment:</p>
+                <div class="code-block">&lt;a href="<%= baseUrl %>/agent/<%= agent.slug %>"
+   target="_blank"
+   style="display: inline-block; background: #22c55e; color: white; padding: 15px 30px; border-radius: 5px; text-decoration: none; font-weight: bold;"&gt;
+    Check Your Home Readiness
+&lt;/a&gt;</div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

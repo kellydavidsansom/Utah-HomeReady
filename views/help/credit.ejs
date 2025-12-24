@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <%- include('../partials/header', { agent }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="card" style="max-width: 700px; margin: 0 auto;">
+                <h1 class="text-center mb-2">Credit Improvement Help</h1>
+                <p class="text-center mb-3" style="color: var(--gray);">Let's work together to improve your credit score.</p>
+
+                <div class="alert alert-info mb-3">
+                    <strong>Good news!</strong> Many people improve their credit by 50+ points in just a few months with the right guidance.
+                </div>
+
+                <h3 class="mb-2">Get Your Free Credit Reports</h3>
+                <p class="mb-2">First, you'll need copies of your credit reports. You can get them free at:</p>
+                <p class="mb-3"><a href="https://www.annualcreditreport.com" target="_blank" class="btn btn-outline">AnnualCreditReport.com</a></p>
+
+                <h3 class="mb-2">Upload Your Reports</h3>
+                <p class="mb-2">Upload your reports and we'll provide personalized recommendations:</p>
+
+                <form action="/help/<%= lead.id %>/credit/upload" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="form-label">Experian Report</label>
+                        <input type="file" name="experian" class="form-input" accept=".pdf,.jpg,.png">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Equifax Report</label>
+                        <input type="file" name="equifax" class="form-input" accept=".pdf,.jpg,.png">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">TransUnion Report</label>
+                        <input type="file" name="transunion" class="form-input" accept=".pdf,.jpg,.png">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Get My Credit Analysis</button>
+                </form>
+
+                <hr style="margin: 30px 0;">
+
+                <h3 class="mb-2">Quick Credit Tips</h3>
+                <div class="action-item">
+                    <div class="action-item-icon">1</div>
+                    <div class="action-item-content">
+                        <h4>Pay Down Credit Card Balances</h4>
+                        <p>Keep credit utilization below 30% of your limit</p>
+                    </div>
+                </div>
+                <div class="action-item">
+                    <div class="action-item-icon">2</div>
+                    <div class="action-item-content">
+                        <h4>Never Miss a Payment</h4>
+                        <p>Set up auto-pay for at least the minimum</p>
+                    </div>
+                </div>
+                <div class="action-item">
+                    <div class="action-item-icon">3</div>
+                    <div class="action-item-content">
+                        <h4>Dispute Any Errors</h4>
+                        <p>Check your reports for mistakes and dispute them</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .assessment-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        .section-subtitle {
+            color: var(--gray);
+            margin-bottom: 25px;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .nav-buttons .btn {
+            flex: 1;
+        }
+        .btn-back {
+            background: var(--white);
+            color: var(--dark);
+            border: 2px solid var(--border);
+        }
+        .btn-back:hover {
+            background: var(--bg);
+        }
+        .hidden {
+            display: none !important;
+        }
+        .coborrower-section {
+            background: var(--bg);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        @media (max-width: 500px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header', { agent }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="assessment-container">
+                <!-- Progress Bar -->
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-step" data-section="1"></div>
+                    <div class="progress-step" data-section="2"></div>
+                    <div class="progress-step" data-section="3"></div>
+                    <div class="progress-step" data-section="4"></div>
+                    <div class="progress-step" data-section="5"></div>
+                    <div class="progress-step" data-section="6"></div>
+                </div>
+
+                <form id="assessmentForm" action="/assessment/<%= lead.id %>/submit" method="POST">
+                    <!-- Section 1: Who's Buying -->
+                    <div class="card assessment-section active" data-section="1">
+                        <h2 class="section-title">Who's Buying?</h2>
+                        <p class="section-subtitle">Let's start with the basics</p>
+
+                        <div class="form-group">
+                            <label class="form-label">Are you buying with a co-borrower?</label>
+                            <select name="coborrower_status" id="coborrowerStatus" class="form-select" required>
+                                <option value="">Select an option...</option>
+                                <option value="Yes, with spouse/partner">Yes, with spouse/partner</option>
+                                <option value="Yes, with family member">Yes, with family member</option>
+                                <option value="Yes, with someone else">Yes, with someone else</option>
+                                <option value="No, buying solo">No, buying solo</option>
+                            </select>
+                        </div>
+
+                        <div class="nav-buttons">
+                            <button type="button" class="btn btn-primary" onclick="nextSection()">Continue</button>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Your Information -->
+                    <div class="card assessment-section" data-section="2">
+                        <h2 class="section-title">Your Information</h2>
+                        <p class="section-subtitle">Tell us about yourself</p>
+
+                        <div class="input-row">
+                            <div class="form-group">
+                                <label class="form-label">First Name</label>
+                                <input type="text" name="first_name" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" name="last_name" class="form-input" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" name="phone" class="form-input phone-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Current Street Address</label>
+                            <input type="text" name="street_address" class="form-input" required>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="form-group">
+                                <label class="form-label">City</label>
+                                <input type="text" name="city" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">State</label>
+                                <select name="state" class="form-select" required>
+                                    <option value="Utah" selected>Utah</option>
+                                    <option value="Alabama">Alabama</option>
+                                    <option value="Alaska">Alaska</option>
+                                    <option value="Arizona">Arizona</option>
+                                    <option value="Arkansas">Arkansas</option>
+                                    <option value="California">California</option>
+                                    <option value="Colorado">Colorado</option>
+                                    <option value="Connecticut">Connecticut</option>
+                                    <option value="Delaware">Delaware</option>
+                                    <option value="Florida">Florida</option>
+                                    <option value="Georgia">Georgia</option>
+                                    <option value="Hawaii">Hawaii</option>
+                                    <option value="Idaho">Idaho</option>
+                                    <option value="Illinois">Illinois</option>
+                                    <option value="Indiana">Indiana</option>
+                                    <option value="Iowa">Iowa</option>
+                                    <option value="Kansas">Kansas</option>
+                                    <option value="Kentucky">Kentucky</option>
+                                    <option value="Louisiana">Louisiana</option>
+                                    <option value="Maine">Maine</option>
+                                    <option value="Maryland">Maryland</option>
+                                    <option value="Massachusetts">Massachusetts</option>
+                                    <option value="Michigan">Michigan</option>
+                                    <option value="Minnesota">Minnesota</option>
+                                    <option value="Mississippi">Mississippi</option>
+                                    <option value="Missouri">Missouri</option>
+                                    <option value="Montana">Montana</option>
+                                    <option value="Nebraska">Nebraska</option>
+                                    <option value="Nevada">Nevada</option>
+                                    <option value="New Hampshire">New Hampshire</option>
+                                    <option value="New Jersey">New Jersey</option>
+                                    <option value="New Mexico">New Mexico</option>
+                                    <option value="New York">New York</option>
+                                    <option value="North Carolina">North Carolina</option>
+                                    <option value="North Dakota">North Dakota</option>
+                                    <option value="Ohio">Ohio</option>
+                                    <option value="Oklahoma">Oklahoma</option>
+                                    <option value="Oregon">Oregon</option>
+                                    <option value="Pennsylvania">Pennsylvania</option>
+                                    <option value="Rhode Island">Rhode Island</option>
+                                    <option value="South Carolina">South Carolina</option>
+                                    <option value="South Dakota">South Dakota</option>
+                                    <option value="Tennessee">Tennessee</option>
+                                    <option value="Texas">Texas</option>
+                                    <option value="Vermont">Vermont</option>
+                                    <option value="Virginia">Virginia</option>
+                                    <option value="Washington">Washington</option>
+                                    <option value="West Virginia">West Virginia</option>
+                                    <option value="Wisconsin">Wisconsin</option>
+                                    <option value="Wyoming">Wyoming</option>
+                                    <option value="DC">Washington DC</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="form-group">
+                                <label class="form-label">Zip Code</label>
+                                <input type="text" name="zip" class="form-input" maxlength="5" pattern="[0-9]{5}" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Time at Address</label>
+                                <select name="time_at_address" class="form-select" required>
+                                    <option value="">Select...</option>
+                                    <option value="Less than 1 year">Less than 1 year</option>
+                                    <option value="1-2 years">1-2 years</option>
+                                    <option value="2+ years">2+ years</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="nav-buttons">
+                            <button type="button" class="btn btn-back" onclick="prevSection()">Back</button>
+                            <button type="button" class="btn btn-primary" onclick="nextSection()">Continue</button>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Co-Borrower Information -->
+                    <div class="card assessment-section" data-section="3" id="coborrowerSection">
+                        <h2 class="section-title">Co-Borrower Information</h2>
+                        <p class="section-subtitle">Tell us about your co-borrower</p>
+
+                        <div class="input-row">
+                            <div class="form-group">
+                                <label class="form-label">Co-Borrower's First Name</label>
+                                <input type="text" name="coborrower_first_name" id="coborrowerFirstName" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Co-Borrower's Last Name</label>
+                                <input type="text" name="coborrower_last_name" id="coborrowerLastName" class="form-input">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Co-Borrower's Email</label>
+                            <input type="email" name="coborrower_email" id="coborrowerEmail" class="form-input">
+                        </div>
+
+                        <div class="nav-buttons">
+                            <button type="button" class="btn btn-back" onclick="prevSection()">Back</button>
+                            <button type="button" class="btn btn-primary" onclick="nextSection()">Continue</button>
+                        </div>
+                    </div>
+
+                    <!-- Section 4: Income & Employment -->
+                    <div class="card assessment-section" data-section="4">
+                        <h2 class="section-title">Income & Employment</h2>
+                        <p class="section-subtitle">Let's look at your financial picture</p>
+
+                        <div class="form-group">
+                            <label class="form-label"><span class="borrower-name">Your</span> Gross Annual Income (before taxes)</label>
+                            <input type="text" name="gross_annual_income" class="form-input currency-input" placeholder="e.g., 75000" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label"><span class="borrower-name">Your</span> Employment Type</label>
+                            <select name="employment_type" class="form-select" required>
+                                <option value="">Select...</option>
+                                <option value="W-2 Employee (traditional job)">W-2 Employee (traditional job)</option>
+                                <option value="Self-Employed">Self-Employed</option>
+                                <option value="1099 Contractor">1099 Contractor</option>
+                                <option value="Retired">Retired</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div id="coborrowerIncomeSection" class="coborrower-section hidden">
+                            <div class="form-group">
+                                <label class="form-label"><span class="coborrower-name">Co-Borrower's</span> Gross Annual Income</label>
+                                <input type="text" name="coborrower_gross_annual_income" class="form-input currency-input" placeholder="e.g., 60000">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label"><span class="coborrower-name">Co-Borrower's</span> Employment Type</label>
+                                <select name="coborrower_employment_type" class="form-select">
+                                    <option value="">Select...</option>
+                                    <option value="W-2 Employee (traditional job)">W-2 Employee (traditional job)</option>
+                                    <option value="Self-Employed">Self-Employed</option>
+                                    <option value="1099 Contractor">1099 Contractor</option>
+                                    <option value="Retired">Retired</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="nav-buttons">
+                            <button type="button" class="btn btn-back" onclick="prevSection()">Back</button>
+                            <button type="button" class="btn btn-primary" onclick="nextSection()">Continue</button>
+                        </div>
+                    </div>
+
+                    <!-- Section 5: Financial Picture -->
+                    <div class="card assessment-section" data-section="5">
+                        <h2 class="section-title">Financial Picture</h2>
+                        <p class="section-subtitle">A few more details about your finances</p>
+
+                        <div class="form-group">
+                            <label class="form-label">Total Monthly Debt Payments</label>
+                            <span class="form-helper">Include car payments, student loans, credit cards, child support, etc. Do NOT include rent.</span>
+                            <select name="monthly_debt_payments" class="form-select" required>
+                                <option value="">Select...</option>
+                                <option value="Under $200">Under $200</option>
+                                <option value="$200 - $499">$200 - $499</option>
+                                <option value="$500 - $799">$500 - $799</option>
+                                <option value="$800 - $1,199">$800 - $1,199</option>
+                                <option value="$1,200 - $1,799">$1,200 - $1,799</option>
+                                <option value="$1,800 - $2,499">$1,800 - $2,499</option>
+                                <option value="$2,500+">$2,500+</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">What's your credit score range?</label>
+                            <span class="form-helper">Use your best estimate - we'll verify later</span>
+                            <select name="credit_score_range" class="form-select" required>
+                                <option value="">Select...</option>
+                                <option value="Excellent (740+)">Excellent (740+)</option>
+                                <option value="Good (670-739)">Good (670-739)</option>
+                                <option value="Fair (580-669)">Fair (580-669)</option>
+                                <option value="Needs Work (below 580)">Needs Work (below 580)</option>
+                                <option value="I don't know">I don't know</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">How much have you saved for a down payment?</label>
+                            <input type="text" name="down_payment_saved" class="form-input currency-input" placeholder="e.g., 25000" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Where is your down payment coming from? (select all that apply)</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="down_payment_sources" value="My own savings">
+                                    <span>My own savings</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="down_payment_sources" value="Gift from family">
+                                    <span>Gift from family</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="down_payment_sources" value="401k/retirement withdrawal">
+                                    <span>401k/retirement withdrawal</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="down_payment_sources" value="Down payment assistance program">
+                                    <span>Down payment assistance program</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="down_payment_sources" value="Selling current home">
+                                    <span>Selling current home</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="down_payment_sources" value="Other">
+                                    <span>Other</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="down_payment_sources" value="Not sure yet">
+                                    <span>Not sure yet</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="nav-buttons">
+                            <button type="button" class="btn btn-back" onclick="prevSection()">Back</button>
+                            <button type="button" class="btn btn-primary" onclick="nextSection()">Continue</button>
+                        </div>
+                    </div>
+
+                    <!-- Section 6: Home Buying Plans -->
+                    <div class="card assessment-section" data-section="6">
+                        <h2 class="section-title">Your Home Buying Plans</h2>
+                        <p class="section-subtitle">Almost done! Just a few more questions.</p>
+
+                        <div class="form-group">
+                            <label class="form-label">When are you hoping to buy?</label>
+                            <select name="timeline" class="form-select" required>
+                                <option value="">Select...</option>
+                                <option value="ASAP - ready now!">ASAP - ready now!</option>
+                                <option value="1-3 months">1-3 months</option>
+                                <option value="3-6 months">3-6 months</option>
+                                <option value="6-12 months">6-12 months</option>
+                                <option value="12+ months">12+ months</option>
+                                <option value="Just exploring options">Just exploring options</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Which Utah counties are you considering? (select all that apply)</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Salt Lake County">
+                                    <span>Salt Lake County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Utah County">
+                                    <span>Utah County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Davis County">
+                                    <span>Davis County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Weber County">
+                                    <span>Weber County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Cache County">
+                                    <span>Cache County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Washington County">
+                                    <span>Washington County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Summit County">
+                                    <span>Summit County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Tooele County">
+                                    <span>Tooele County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Wasatch County">
+                                    <span>Wasatch County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Box Elder County">
+                                    <span>Box Elder County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Morgan County">
+                                    <span>Morgan County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Iron County">
+                                    <span>Iron County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Other">
+                                    <span>Other</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Is this your first home purchase?</label>
+                            <select name="first_time_buyer" class="form-select" required>
+                                <option value="">Select...</option>
+                                <option value="Yes, I've never owned a home">Yes, I've never owned a home</option>
+                                <option value="Yes, first-time buyer because I haven't owned in the last 3 years">Yes, first-time buyer (haven't owned in 3+ years)</option>
+                                <option value="No, I currently own or have owned within 3 years">No, I currently own or have owned within 3 years</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Are you or your co-borrower VA eligible?</label>
+                            <span class="form-helper">Active military, veteran, or surviving spouse</span>
+                            <select name="va_eligible" class="form-select" required>
+                                <option value="">Select...</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                                <option value="Not sure">Not sure</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">What's your current housing situation?</label>
+                            <select name="current_housing" class="form-select" required>
+                                <option value="">Select...</option>
+                                <option value="Renting">Renting</option>
+                                <option value="Own a home (planning to sell)">Own a home (planning to sell)</option>
+                                <option value="Own a home (keeping as investment)">Own a home (keeping as investment)</option>
+                                <option value="Living with family/friends">Living with family/friends</option>
+                            </select>
+                        </div>
+
+                        <div class="nav-buttons">
+                            <button type="button" class="btn btn-back" onclick="prevSection()">Back</button>
+                            <button type="submit" class="btn btn-primary btn-large">See My Results</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+
+    <script src="/js/main.js"></script>
+    <script>
+        let currentSection = 1;
+        const totalSections = 6;
+        let hasCoborrower = false;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+
+            // Watch for co-borrower selection
+            document.getElementById('coborrowerStatus').addEventListener('change', function() {
+                hasCoborrower = this.value !== 'No, buying solo' && this.value !== '';
+                updateCoborrowerVisibility();
+            });
+        });
+
+        function updateCoborrowerVisibility() {
+            const coborrowerSection = document.querySelector('[data-section="3"]');
+            const coborrowerIncomeSection = document.getElementById('coborrowerIncomeSection');
+            const coborrowerInputs = coborrowerSection.querySelectorAll('input');
+
+            if (hasCoborrower) {
+                coborrowerSection.classList.remove('hidden');
+                coborrowerIncomeSection.classList.remove('hidden');
+                coborrowerInputs.forEach(input => input.required = true);
+            } else {
+                coborrowerSection.classList.add('hidden');
+                coborrowerIncomeSection.classList.add('hidden');
+                coborrowerInputs.forEach(input => input.required = false);
+            }
+        }
+
+        function updateProgress() {
+            document.querySelectorAll('.progress-step').forEach((step, index) => {
+                const sectionNum = index + 1;
+                step.classList.remove('active', 'complete');
+
+                if (sectionNum < currentSection) {
+                    step.classList.add('complete');
+                } else if (sectionNum === currentSection) {
+                    step.classList.add('active');
+                }
+            });
+        }
+
+        function showSection(sectionNum) {
+            document.querySelectorAll('.assessment-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            const targetSection = document.querySelector(`[data-section="${sectionNum}"]`);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            currentSection = sectionNum;
+            updateProgress();
+
+            // Scroll to top of form
+            window.scrollTo({ top: 200, behavior: 'smooth' });
+        }
+
+        function validateCurrentSection() {
+            const section = document.querySelector(`[data-section="${currentSection}"]`);
+            const requiredInputs = section.querySelectorAll('[required]');
+            let valid = true;
+
+            requiredInputs.forEach(input => {
+                if (!input.value) {
+                    valid = false;
+                    input.classList.add('error');
+                } else {
+                    input.classList.remove('error');
+                }
+            });
+
+            return valid;
+        }
+
+        function nextSection() {
+            if (!validateCurrentSection()) {
+                return;
+            }
+
+            let nextSectionNum = currentSection + 1;
+
+            // Skip co-borrower section if buying solo
+            if (nextSectionNum === 3 && !hasCoborrower) {
+                nextSectionNum = 4;
+            }
+
+            if (nextSectionNum <= totalSections) {
+                showSection(nextSectionNum);
+            }
+        }
+
+        function prevSection() {
+            let prevSectionNum = currentSection - 1;
+
+            // Skip co-borrower section if buying solo
+            if (prevSectionNum === 3 && !hasCoborrower) {
+                prevSectionNum = 2;
+            }
+
+            if (prevSectionNum >= 1) {
+                showSection(prevSectionNum);
+            }
+        }
+
+        // Update borrower/coborrower names in labels
+        function updateNames() {
+            const firstName = document.querySelector('input[name="first_name"]').value || 'Your';
+            const coborrowerFirstName = document.querySelector('input[name="coborrower_first_name"]').value || "Co-Borrower's";
+
+            document.querySelectorAll('.borrower-name').forEach(el => {
+                el.textContent = firstName ? `${firstName}'s` : 'Your';
+            });
+
+            document.querySelectorAll('.coborrower-name').forEach(el => {
+                el.textContent = coborrowerFirstName ? `${coborrowerFirstName}'s` : "Co-Borrower's";
+            });
+        }
+    </script>
+</body>
+</html>

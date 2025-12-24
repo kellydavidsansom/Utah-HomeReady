@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .admin-nav { background: var(--dark); padding: 15px 0; }
+        .admin-nav .container { display: flex; justify-content: space-between; align-items: center; }
+        .admin-nav a { color: white; text-decoration: none; margin-right: 20px; }
+        .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .detail-section { background: var(--white); padding: 20px; border-radius: 8px; }
+        .detail-section h3 { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+        .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--bg); }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { color: var(--gray); }
+        .status-badge { display: inline-block; padding: 8px 20px; border-radius: 20px; font-weight: 600; color: white; }
+        .status-badge.green { background: var(--green); }
+        .status-badge.yellow { background: var(--yellow); }
+        .status-badge.red { background: var(--red); }
+    </style>
+</head>
+<body>
+    <nav class="admin-nav">
+        <div class="container">
+            <div>
+                <a href="/admin/dashboard"><strong>Admin</strong></a>
+                <a href="/admin/leads">Leads</a>
+                <a href="/admin/agents">Agents</a>
+            </div>
+            <a href="/admin/logout">Logout</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <div>
+                    <h1><%= lead.first_name %> <%= lead.last_name %></h1>
+                    <% if (lead.readiness_level) { %>
+                        <span class="status-badge <%= lead.readiness_level %>"><%= lead.readiness_level.toUpperCase() %> - Score: <%= lead.readiness_score %></span>
+                    <% } %>
+                </div>
+                <div>
+                    <a href="/results/<%= lead.id %>" class="btn btn-outline" target="_blank">View Results</a>
+                    <a href="/admin/leads/<%= lead.id %>/mismo" class="btn btn-secondary">Download MISMO</a>
+                </div>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-section">
+                    <h3>Contact Info</h3>
+                    <div class="detail-row"><span class="detail-label">Email</span><span><%= lead.email %></span></div>
+                    <div class="detail-row"><span class="detail-label">Phone</span><span><%= lead.phone || '-' %></span></div>
+                    <div class="detail-row"><span class="detail-label">Address</span><span><%= lead.street_address %>, <%= lead.city %>, <%= lead.state %> <%= lead.zip %></span></div>
+                    <div class="detail-row"><span class="detail-label">Time at Address</span><span><%= lead.time_at_address %></span></div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>Financial Info</h3>
+                    <div class="detail-row"><span class="detail-label">Gross Income</span><span>$<%= (lead.gross_annual_income || 0).toLocaleString() %></span></div>
+                    <% if (lead.has_coborrower) { %>
+                        <div class="detail-row"><span class="detail-label">Co-Borrower Income</span><span>$<%= (lead.coborrower_gross_annual_income || 0).toLocaleString() %></span></div>
+                    <% } %>
+                    <div class="detail-row"><span class="detail-label">Employment</span><span><%= lead.employment_type %></span></div>
+                    <div class="detail-row"><span class="detail-label">Monthly Debts</span><span><%= lead.monthly_debt_payments %></span></div>
+                    <div class="detail-row"><span class="detail-label">Credit Score</span><span><%= lead.credit_score_range %></span></div>
+                    <div class="detail-row"><span class="detail-label">Down Payment</span><span>$<%= (lead.down_payment_saved || 0).toLocaleString() %></span></div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>Affordability</h3>
+                    <div class="detail-row" style="color: var(--green);"><span>Comfortable</span><span>$<%= (lead.comfortable_price || 0).toLocaleString() %></span></div>
+                    <div class="detail-row" style="color: var(--yellow);"><span>Stretch</span><span>$<%= (lead.stretch_price || 0).toLocaleString() %></span></div>
+                    <div class="detail-row" style="color: var(--red);"><span>Strained</span><span>$<%= (lead.strained_price || 0).toLocaleString() %></span></div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>Buying Plans</h3>
+                    <div class="detail-row"><span class="detail-label">Timeline</span><span><%= lead.timeline %></span></div>
+                    <div class="detail-row"><span class="detail-label">Counties</span><span><%= targetCounties.join(', ') || '-' %></span></div>
+                    <div class="detail-row"><span class="detail-label">First-Time Buyer</span><span><%= lead.first_time_buyer %></span></div>
+                    <div class="detail-row"><span class="detail-label">VA Eligible</span><span><%= lead.va_eligible %></span></div>
+                    <div class="detail-row"><span class="detail-label">Current Housing</span><span><%= lead.current_housing %></span></div>
+                </div>
+            </div>
+
+            <% if (lead.ai_summary) { %>
+                <div class="detail-section mt-3">
+                    <h3>AI Summary</h3>
+                    <p><%= lead.ai_summary %></p>
+                </div>
+            <% } %>
+        </div>
+    </main>
+</body>
+</html>

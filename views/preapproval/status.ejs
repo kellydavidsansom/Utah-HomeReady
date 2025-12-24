@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <%- include('../partials/header', { agent }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="card" style="max-width: 600px; margin: 0 auto; text-align: center;">
+                <h1 class="mb-2">Documents Received!</h1>
+                <p style="color: var(--gray);">Thank you for submitting your documents. We'll review them and be in touch shortly.</p>
+
+                <div class="mt-3">
+                    <p><strong>What happens next:</strong></p>
+                    <ol style="text-align: left; max-width: 400px; margin: 20px auto;">
+                        <li>Kelly will review your documents</li>
+                        <li>We may reach out for additional information</li>
+                        <li>You'll receive your pre-approval letter via email</li>
+                    </ol>
+                </div>
+
+                <div class="mt-3">
+                    <p>Questions? Contact Kelly:</p>
+                    <p><a href="tel:8018911846">(801) 891-1846</a></p>
+                    <p><a href="mailto:hello@clearpathutah.com">hello@clearpathutah.com</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <%- include('../partials/header', { agent }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="card" style="max-width: 600px; margin: 0 auto;">
+                <h1 class="text-center mb-2">Get Pre-Approved</h1>
+                <p class="text-center mb-3" style="color: var(--gray);">Upload your documents to start the pre-approval process.</p>
+
+                <div class="alert alert-info">
+                    <strong>Documents Needed:</strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li>Last 2 years of tax returns</li>
+                        <li>Recent pay stubs (last 30 days)</li>
+                        <li>Bank statements (last 2 months)</li>
+                        <li>Photo ID</li>
+                    </ul>
+                </div>
+
+                <form action="/preapproval/<%= lead.id %>/submit" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="form-label">Tax Returns</label>
+                        <input type="file" name="tax_returns" class="form-input" multiple accept=".pdf,.jpg,.png">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pay Stubs</label>
+                        <input type="file" name="pay_stubs" class="form-input" multiple accept=".pdf,.jpg,.png">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bank Statements</label>
+                        <input type="file" name="bank_statements" class="form-input" multiple accept=".pdf,.jpg,.png">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Photo ID</label>
+                        <input type="file" name="id" class="form-input" accept=".pdf,.jpg,.png">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Submit Documents</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

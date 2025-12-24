@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <main class="main-content" style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+        <div class="card" style="width: 100%; max-width: 400px;">
+            <h1 class="text-center mb-3">Create Your Account</h1>
+            <p class="text-center mb-3" style="color: var(--gray);">Create an account to track your progress and access resources.</p>
+
+            <form action="/help/<%= lead.id %>/create-account" method="POST">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" value="<%= lead.email %>" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Create Password</label>
+                    <input type="password" name="password" class="form-input" required minlength="8">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

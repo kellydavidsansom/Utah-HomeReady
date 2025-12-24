@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <%- include('../partials/header', { agent }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div style="max-width: 800px; margin: 0 auto;">
+                <h1 class="text-center mb-2">Boost Your Buying Power</h1>
+                <p class="text-center mb-3" style="color: var(--gray);">Let's explore ways to increase your income or down payment.</p>
+
+                <% if (boostIdeas) { %>
+                    <% if (boostIdeas.income_ideas && boostIdeas.income_ideas.length > 0) { %>
+                        <div class="card mb-3">
+                            <h2 class="mb-2">Income Boost Ideas</h2>
+                            <% boostIdeas.income_ideas.forEach(idea => { %>
+                                <div class="action-item">
+                                    <div class="action-item-icon" style="background: var(--green);">$</div>
+                                    <div class="action-item-content">
+                                        <h4><%= idea.title %></h4>
+                                        <p><%= idea.description %></p>
+                                        <% if (idea.potential_monthly) { %>
+                                            <p><strong>Potential:</strong> <%= idea.potential_monthly %>/month</p>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+
+                    <% if (boostIdeas.down_payment_sources && boostIdeas.down_payment_sources.length > 0) { %>
+                        <div class="card mb-3">
+                            <h2 class="mb-2">Down Payment Sources</h2>
+                            <% boostIdeas.down_payment_sources.forEach(source => { %>
+                                <div class="action-item">
+                                    <div class="action-item-icon" style="background: var(--blue);">$</div>
+                                    <div class="action-item-content">
+                                        <h4><%= source.source %></h4>
+                                        <p><%= source.description %></p>
+                                        <% if (source.amount_possible) { %>
+                                            <p><strong>Possible Amount:</strong> <%= source.amount_possible %></p>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+
+                    <% if (boostIdeas.savings_strategies && boostIdeas.savings_strategies.length > 0) { %>
+                        <div class="card mb-3">
+                            <h2 class="mb-2">Savings Strategies</h2>
+                            <% boostIdeas.savings_strategies.forEach(strategy => { %>
+                                <div class="action-item">
+                                    <div class="action-item-icon" style="background: var(--yellow);">!</div>
+                                    <div class="action-item-content">
+                                        <h4><%= strategy.title %></h4>
+                                        <p><%= strategy.description %></p>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+                <% } else { %>
+                    <div class="card">
+                        <h2 class="mb-2">General Tips</h2>
+                        <div class="action-item">
+                            <div class="action-item-icon">1</div>
+                            <div class="action-item-content">
+                                <h4>Explore Down Payment Assistance</h4>
+                                <p>Utah has several programs for first-time buyers</p>
+                            </div>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-item-icon">2</div>
+                            <div class="action-item-content">
+                                <h4>Consider FHA Loans</h4>
+                                <p>Only 3.5% down payment required</p>
+                            </div>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-item-icon">3</div>
+                            <div class="action-item-content">
+                                <h4>Gift Funds</h4>
+                                <p>Family members can gift down payment funds</p>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+
+                <div class="text-center mt-3">
+                    <p>Want personalized guidance? Let's talk!</p>
+                    <a href="mailto:hello@clearpathutah.com" class="btn btn-primary">Contact Kelly</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

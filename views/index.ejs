@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <%- include('partials/header', { agent: null }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="hero">
+                <h1>Are You Ready to Buy a Home?</h1>
+                <p>Take our quick assessment to find out how ready you are to purchase a home in Utah. Get personalized insights and your estimated price range in just a few minutes.</p>
+            </div>
+
+            <div class="card" style="max-width: 600px; margin: 0 auto; text-align: center;">
+                <h2 class="mb-2">What You'll Learn</h2>
+
+                <div style="text-align: left; margin-bottom: 30px;">
+                    <div class="action-item">
+                        <div class="action-item-icon" style="background: var(--green);">1</div>
+                        <div class="action-item-content">
+                            <h4>Your Readiness Level</h4>
+                            <p>Find out if you're ready now, almost ready, or need some preparation</p>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-item-icon" style="background: var(--blue);">2</div>
+                        <div class="action-item-content">
+                            <h4>Your Price Range</h4>
+                            <p>Get an estimated home price based on your income and situation</p>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-item-icon" style="background: var(--yellow);">3</div>
+                        <div class="action-item-content">
+                            <h4>Personalized Next Steps</h4>
+                            <p>Receive specific action items tailored to your situation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="mb-2" style="color: var(--gray);">This assessment takes about 3-5 minutes and is completely free.</p>
+
+                <p class="mb-3" style="font-size: 0.875rem; color: var(--light-gray);">
+                    Looking for a specific agent? Ask them for their personal link.
+                </p>
+
+                <a href="mailto:hello@clearpathutah.com?subject=Utah Home Ready Check" class="btn btn-primary btn-large">
+                    Contact Us to Get Started
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

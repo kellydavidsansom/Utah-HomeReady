@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title + ' | ' : '' %>Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <% if (typeof extraStyles !== 'undefined') { %>
+        <%- extraStyles %>
+    <% } %>
+</head>
+<body class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
+    <%- include('../partials/header', { agent: typeof agent !== 'undefined' ? agent : null }) %>
+
+    <main class="main-content">
+        <%- body %>
+    </main>
+
+    <%- include('../partials/footer') %>
+
+    <script src="/js/main.js"></script>
+    <% if (typeof extraScripts !== 'undefined') { %>
+        <%- extraScripts %>
+    <% } %>
+</body>
+</html>

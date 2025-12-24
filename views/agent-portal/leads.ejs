@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Utah Home Ready Check</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .agent-nav { background: var(--blue); padding: 15px 0; }
+        .agent-nav .container { display: flex; justify-content: space-between; align-items: center; }
+        .agent-nav a { color: white; text-decoration: none; margin-right: 20px; }
+        .leads-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 8px; overflow: hidden; }
+        .leads-table th, .leads-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border); }
+        .leads-table th { background: var(--bg); font-weight: 600; }
+        .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: white; }
+        .status-badge.green { background: var(--green); }
+        .status-badge.yellow { background: var(--yellow); }
+        .status-badge.red { background: var(--red); }
+    </style>
+</head>
+<body>
+    <nav class="agent-nav">
+        <div class="container">
+            <div>
+                <a href="/agent-portal/dashboard">Dashboard</a>
+                <a href="/agent-portal/leads"><strong>My Leads</strong></a>
+                <a href="/agent-portal/settings">Settings</a>
+                <a href="/agent-portal/embed">Embed Code</a>
+            </div>
+            <a href="/agent-portal/logout">Logout</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="mb-3">My Leads</h1>
+
+            <table class="leads-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Score</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (leads && leads.length > 0) { %>
+                        <% leads.forEach(lead => { %>
+                            <tr>
+                                <td><%= lead.first_name %> <%= lead.last_name %></td>
+                                <td><%= lead.email %></td>
+                                <td><%= lead.phone || '-' %></td>
+                                <td>
+                                    <% if (lead.readiness_level) { %>
+                                        <span class="status-badge <%= lead.readiness_level %>"><%= lead.readiness_level %></span>
+                                    <% } else { %>
+                                        -
+                                    <% } %>
+                                </td>
+                                <td><%= lead.readiness_score || '-' %></td>
+                                <td><%= new Date(lead.created_at).toLocaleDateString() %></td>
+                                <td><a href="/agent-portal/leads/<%= lead.id %>">View</a></td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="7" style="text-align: center; color: var(--gray);">No leads yet. Share your link to start getting leads!</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>
