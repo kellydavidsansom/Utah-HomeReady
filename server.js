@@ -8,9 +8,6 @@ const { initDatabase } = require('./services/database');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Initialize database
-initDatabase();
-
 // View engine setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -72,7 +69,18 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`Utah Home Ready Check running on port ${PORT}`);
-    console.log(`Local: http://localhost:${PORT}`);
-});
+// Start server after database initialization
+async function startServer() {
+    try {
+        await initDatabase();
+        app.listen(PORT, () => {
+            console.log(`Utah Home Ready Check running on port ${PORT}`);
+            console.log(`Local: http://localhost:${PORT}`);
+        });
+    } catch (err) {
+        console.error('Failed to start server:', err);
+        process.exit(1);
+    }
+}
+
+startServer();

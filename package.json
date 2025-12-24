@@ -7,14 +7,18 @@
     "start": "node server.js",
     "dev": "node --watch server.js"
   },
-  "keywords": ["mortgage", "real-estate", "lead-qualification", "utah"],
+  "keywords": [
+    "mortgage",
+    "real-estate",
+    "lead-qualification",
+    "utah"
+  ],
   "author": "ClearPath Utah Mortgage",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
     "bcryptjs": "^3.0.3",
-    "better-sqlite3": "^12.5.0",
     "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
     "express": "^5.2.1",
@@ -24,6 +28,7 @@
     "mailgun.js": "^12.4.0",
     "multer": "^2.0.2",
     "pdfkit": "^0.17.2",
+    "sql.js": "^1.13.0",
     "uuid": "^13.0.0"
   }
 }
