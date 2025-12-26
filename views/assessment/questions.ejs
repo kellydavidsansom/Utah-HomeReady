@@ -530,7 +530,7 @@
             for (var s = 0; s < allSections.length; s++) {
                 allSections[s].style.display = 'none';
             }
-            var section1 = document.querySelector('[data-section="1"]');
+            var section1 = document.querySelector('.assessment-section[data-section="1"]');
             if (section1) {
                 section1.style.display = 'block';
                 console.log('Section 1 is now visible');
@@ -570,7 +570,7 @@
         });
 
         function updateCoborrowerVisibility() {
-            var coborrowerSection = document.querySelector('[data-section="3"]');
+            var coborrowerSection = document.querySelector('.assessment-section[data-section="3"]');
             var coborrowerIncomeSection = document.getElementById('coborrowerIncomeSection');
             if (!coborrowerSection) return;
             var coborrowerInputs = coborrowerSection.querySelectorAll('input');
@@ -612,7 +612,7 @@
                 sections[i].classList.remove('active');
             }
 
-            var targetSection = document.querySelector('[data-section="' + sectionNum + '"]');
+            var targetSection = document.querySelector('.assessment-section[data-section="' + sectionNum + '"]');
             if (targetSection) {
                 targetSection.style.display = 'block';
                 targetSection.style.visibility = 'visible';
@@ -631,7 +631,7 @@
 
         function validateCurrentSection() {
             console.log('Validating section ' + currentSection);
-            var section = document.querySelector('[data-section="' + currentSection + '"]');
+            var section = document.querySelector('.assessment-section[data-section="' + currentSection + '"]');
             if (!section) {
                 console.log('Section not found!');
                 return true;
