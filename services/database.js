@@ -92,6 +92,7 @@ async function initDatabase() {
             coborrower_employment_type TEXT,
             monthly_debt_payments TEXT,
             credit_score_range TEXT,
+            coborrower_credit_score_range TEXT,
             down_payment_saved REAL,
             down_payment_sources TEXT,
 
@@ -174,6 +175,9 @@ async function initDatabase() {
     } catch (e) { /* Column may already exist */ }
     try {
         db.run(`ALTER TABLE leads ADD COLUMN strained_loan REAL`);
+    } catch (e) { /* Column may already exist */ }
+    try {
+        db.run(`ALTER TABLE leads ADD COLUMN coborrower_credit_score_range TEXT`);
     } catch (e) { /* Column may already exist */ }
 
     saveDatabase();

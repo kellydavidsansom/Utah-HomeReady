@@ -61,6 +61,27 @@
             }
         }
 
+        /* Multi-select dropdown */
+        .multi-select {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--white);
+        }
+        .multi-select option {
+            padding: 10px 12px;
+            cursor: pointer;
+        }
+        .multi-select option:checked {
+            background: var(--primary);
+            color: white;
+        }
+        .multi-select option:hover {
+            background: var(--bg);
+        }
+
         /* Loading Overlay */
         .loading-overlay {
             display: none;
@@ -395,6 +416,20 @@
                             </select>
                         </div>
 
+                        <div id="coborrowerCreditSection" class="coborrower-section hidden">
+                            <div class="form-group">
+                                <label class="form-label">Co-Borrower's credit score range?</label>
+                                <select name="coborrower_credit_score_range" class="form-select">
+                                    <option value="">Select...</option>
+                                    <option value="Excellent (740+)">Excellent (740+)</option>
+                                    <option value="Good (670-739)">Good (670-739)</option>
+                                    <option value="Fair (580-669)">Fair (580-669)</option>
+                                    <option value="Needs Work (below 580)">Needs Work (below 580)</option>
+                                    <option value="I don't know">I don't know</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="nav-buttons">
                             <button type="button" class="btn btn-back btn-prev">Back</button>
                             <button type="button" class="btn btn-primary btn-next">Continue</button>
@@ -471,60 +506,22 @@
 
                         <div class="form-group">
                             <label class="form-label">Which Utah counties are you considering? (select all that apply)</label>
-                            <div class="checkbox-group">
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="target_counties" value="Salt Lake County">
-                                    <span>Salt Lake County</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="target_counties" value="Utah County">
-                                    <span>Utah County</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="target_counties" value="Davis County">
-                                    <span>Davis County</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="target_counties" value="Weber County">
-                                    <span>Weber County</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="target_counties" value="Cache County">
-                                    <span>Cache County</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="target_counties" value="Washington County">
-                                    <span>Washington County</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="target_counties" value="Summit County">
-                                    <span>Summit County</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="target_counties" value="Tooele County">
-                                    <span>Tooele County</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="target_counties" value="Wasatch County">
-                                    <span>Wasatch County</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="target_counties" value="Box Elder County">
-                                    <span>Box Elder County</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="target_counties" value="Morgan County">
-                                    <span>Morgan County</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="target_counties" value="Iron County">
-                                    <span>Iron County</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="target_counties" value="Other">
-                                    <span>Other</span>
-                                </label>
-                            </div>
+                            <span class="form-helper">Hold Ctrl/Cmd to select multiple</span>
+                            <select name="target_counties" class="form-select multi-select" multiple size="10">
+                                <option value="Salt Lake County">Salt Lake County</option>
+                                <option value="Utah County">Utah County</option>
+                                <option value="Davis County">Davis County</option>
+                                <option value="Weber County">Weber County</option>
+                                <option value="Cache County">Cache County</option>
+                                <option value="Washington County">Washington County</option>
+                                <option value="Summit County">Summit County</option>
+                                <option value="Tooele County">Tooele County</option>
+                                <option value="Wasatch County">Wasatch County</option>
+                                <option value="Box Elder County">Box Elder County</option>
+                                <option value="Morgan County">Morgan County</option>
+                                <option value="Iron County">Iron County</option>
+                                <option value="Other">Other</option>
+                            </select>
                         </div>
 
                         <div class="nav-buttons">
@@ -683,18 +680,21 @@
         function updateCoborrowerVisibility() {
             var coborrowerSection = document.querySelector('.assessment-section[data-section="4"]');
             var coborrowerIncomeSection = document.getElementById('coborrowerIncomeSection');
+            var coborrowerCreditSection = document.getElementById('coborrowerCreditSection');
             if (!coborrowerSection) return;
             var coborrowerInputs = coborrowerSection.querySelectorAll('input');
 
             if (hasCoborrower) {
                 coborrowerSection.classList.remove('hidden');
                 if (coborrowerIncomeSection) coborrowerIncomeSection.classList.remove('hidden');
+                if (coborrowerCreditSection) coborrowerCreditSection.classList.remove('hidden');
                 for (var i = 0; i < coborrowerInputs.length; i++) {
                     coborrowerInputs[i].required = true;
                 }
             } else {
                 coborrowerSection.classList.add('hidden');
                 if (coborrowerIncomeSection) coborrowerIncomeSection.classList.add('hidden');
+                if (coborrowerCreditSection) coborrowerCreditSection.classList.add('hidden');
                 for (var i = 0; i < coborrowerInputs.length; i++) {
                     coborrowerInputs[i].required = false;
                 }
