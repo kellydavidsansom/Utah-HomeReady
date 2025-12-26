@@ -61,27 +61,6 @@
             }
         }
 
-        /* Multi-select dropdown */
-        .multi-select {
-            width: 100%;
-            padding: 8px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-            background: var(--white);
-        }
-        .multi-select option {
-            padding: 10px 12px;
-            cursor: pointer;
-        }
-        .multi-select option:checked {
-            background: var(--primary);
-            color: white;
-        }
-        .multi-select option:hover {
-            background: var(--bg);
-        }
-
         /* Loading Overlay */
         .loading-overlay {
             display: none;
@@ -506,22 +485,60 @@
 
                         <div class="form-group">
                             <label class="form-label">Which Utah counties are you considering? (select all that apply)</label>
-                            <span class="form-helper">Hold Ctrl/Cmd to select multiple</span>
-                            <select name="target_counties" class="form-select multi-select" multiple size="10">
-                                <option value="Salt Lake County">Salt Lake County</option>
-                                <option value="Utah County">Utah County</option>
-                                <option value="Davis County">Davis County</option>
-                                <option value="Weber County">Weber County</option>
-                                <option value="Cache County">Cache County</option>
-                                <option value="Washington County">Washington County</option>
-                                <option value="Summit County">Summit County</option>
-                                <option value="Tooele County">Tooele County</option>
-                                <option value="Wasatch County">Wasatch County</option>
-                                <option value="Box Elder County">Box Elder County</option>
-                                <option value="Morgan County">Morgan County</option>
-                                <option value="Iron County">Iron County</option>
-                                <option value="Other">Other</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Salt Lake County">
+                                    <span>Salt Lake County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Utah County">
+                                    <span>Utah County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Davis County">
+                                    <span>Davis County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Weber County">
+                                    <span>Weber County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Cache County">
+                                    <span>Cache County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Washington County">
+                                    <span>Washington County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Summit County">
+                                    <span>Summit County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Tooele County">
+                                    <span>Tooele County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Wasatch County">
+                                    <span>Wasatch County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Box Elder County">
+                                    <span>Box Elder County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Morgan County">
+                                    <span>Morgan County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Iron County">
+                                    <span>Iron County</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="target_counties" value="Other">
+                                    <span>Other</span>
+                                </label>
+                            </div>
                         </div>
 
                         <div class="nav-buttons">
