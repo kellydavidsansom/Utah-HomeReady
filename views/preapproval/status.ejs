@@ -5,6 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %> | Utah Home Ready Check</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .doc-list {
+            text-align: left;
+            max-width: 400px;
+            margin: 20px auto;
+            background: var(--bg);
+            padding: 15px 20px;
+            border-radius: 8px;
+        }
+        .doc-item {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .doc-item:last-child {
+            border-bottom: none;
+        }
+        .doc-icon {
+            color: var(--primary);
+        }
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
     <%- include('../partials/header', { agent }) %>
@@ -12,8 +49,32 @@
     <main class="main-content">
         <div class="container">
             <div class="card" style="max-width: 600px; margin: 0 auto; text-align: center;">
+                <% if (success) { %>
+                    <div class="alert-success">
+                        Successfully uploaded <%= uploadCount %> document(s)!
+                    </div>
+                <% } %>
+
+                <% if (error) { %>
+                    <div class="alert-error">
+                        There was an error uploading your documents. Please try again or contact us directly.
+                    </div>
+                <% } %>
+
                 <h1 class="mb-2">Documents Received!</h1>
                 <p style="color: var(--gray);">Thank you for submitting your documents. We'll review them and be in touch shortly.</p>
+
+                <% if (typeof documents !== 'undefined' && documents && documents.length > 0) { %>
+                <div class="doc-list">
+                    <strong>Uploaded Documents:</strong>
+                    <% documents.forEach(function(doc) { %>
+                    <div class="doc-item">
+                        <span class="doc-icon">&#128196;</span>
+                        <span><%= doc.file_name %></span>
+                    </div>
+                    <% }); %>
+                </div>
+                <% } %>
 
                 <div class="mt-3">
                     <p><strong>What happens next:</strong></p>
@@ -22,6 +83,10 @@
                         <li>We may reach out for additional information</li>
                         <li>You'll receive your pre-approval letter via email</li>
                     </ol>
+                </div>
+
+                <div class="mt-3">
+                    <a href="/preapproval/<%= lead.id %>" class="btn btn-outline" style="margin-bottom: 15px;">Upload More Documents</a>
                 </div>
 
                 <div class="mt-3">
