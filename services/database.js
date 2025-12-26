@@ -192,8 +192,14 @@ const dbWrapper = {
                 } else {
                     db.run(sql);
                 }
+                // Get last insert rowid using prepared statement
+                const stmt = db.prepare("SELECT last_insert_rowid() as id");
+                stmt.step();
+                const lastId = stmt.getAsObject().id;
+                stmt.free();
+                const changes = db.getRowsModified();
                 saveDatabase();
-                return { lastInsertRowid: db.exec("SELECT last_insert_rowid()")[0]?.values[0]?.[0] || 0, changes: db.getRowsModified() };
+                return { lastInsertRowid: lastId, changes: changes };
             },
             get: function(...params) {
                 const stmt = db.prepare(sql);
