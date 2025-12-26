@@ -107,6 +107,9 @@ async function initDatabase() {
             comfortable_price REAL,
             stretch_price REAL,
             strained_price REAL,
+            comfortable_loan REAL,
+            stretch_loan REAL,
+            strained_loan REAL,
             comfortable_payment REAL,
             stretch_payment REAL,
             strained_payment REAL,
@@ -161,6 +164,17 @@ async function initDatabase() {
             FOREIGN KEY (lead_id) REFERENCES leads(id)
         )
     `);
+
+    // Add loan columns if they don't exist (migration for existing databases)
+    try {
+        db.run(`ALTER TABLE leads ADD COLUMN comfortable_loan REAL`);
+    } catch (e) { /* Column may already exist */ }
+    try {
+        db.run(`ALTER TABLE leads ADD COLUMN stretch_loan REAL`);
+    } catch (e) { /* Column may already exist */ }
+    try {
+        db.run(`ALTER TABLE leads ADD COLUMN strained_loan REAL`);
+    } catch (e) { /* Column may already exist */ }
 
     saveDatabase();
     console.log('Database initialized successfully');

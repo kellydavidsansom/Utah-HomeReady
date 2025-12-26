@@ -159,19 +159,19 @@
                         <div class="affordability-card comfortable">
                             <div class="label">Comfortable</div>
                             <div class="price">$<%= (lead.comfortable_price || 0).toLocaleString() %></div>
-                            <div class="mortgage">($<%= (lead.comfortable_loan || 0).toLocaleString() %> mortgage)</div>
+                            <div class="mortgage">(~$<%= (lead.comfortable_loan || 0).toLocaleString() %> mortgage)</div>
                             <div class="payment">~$<%= (lead.comfortable_payment || 0).toLocaleString() %>/mo</div>
                         </div>
                         <div class="affordability-card stretch">
                             <div class="label">Stretch</div>
                             <div class="price">$<%= (lead.stretch_price || 0).toLocaleString() %></div>
-                            <div class="mortgage">($<%= (lead.stretch_loan || 0).toLocaleString() %> mortgage)</div>
+                            <div class="mortgage">(~$<%= (lead.stretch_loan || 0).toLocaleString() %> mortgage)</div>
                             <div class="payment">~$<%= (lead.stretch_payment || 0).toLocaleString() %>/mo</div>
                         </div>
                         <div class="affordability-card strained">
                             <div class="label">Strained</div>
                             <div class="price">$<%= (lead.strained_price || 0).toLocaleString() %></div>
-                            <div class="mortgage">($<%= (lead.strained_loan || 0).toLocaleString() %> mortgage)</div>
+                            <div class="mortgage">(~$<%= (lead.strained_loan || 0).toLocaleString() %> mortgage)</div>
                             <div class="payment">~$<%= (lead.strained_payment || 0).toLocaleString() %>/mo</div>
                         </div>
                     </div>

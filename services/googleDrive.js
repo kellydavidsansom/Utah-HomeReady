@@ -19,22 +19,26 @@ function initDriveClient() {
 
     const credentials = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
     if (!credentials) {
-        console.log('Google Drive: No service account key configured');
+        console.log('Google Drive: No GOOGLE_SERVICE_ACCOUNT_KEY environment variable found');
         return null;
     }
 
     try {
         const keyFile = JSON.parse(credentials);
+        console.log('Google Drive: Service account email:', keyFile.client_email);
+        console.log('Google Drive: Target folder ID:', FOLDER_ID);
+
         const auth = new google.auth.GoogleAuth({
             credentials: keyFile,
             scopes: ['https://www.googleapis.com/auth/drive.file']
         });
 
         driveClient = google.drive({ version: 'v3', auth });
-        console.log('Google Drive client initialized');
+        console.log('Google Drive client initialized successfully');
         return driveClient;
     } catch (err) {
         console.error('Failed to initialize Google Drive:', err.message);
+        console.error('Full error:', err);
         return null;
     }
 }
@@ -74,6 +78,8 @@ async function uploadReport(pdfBuffer, lead) {
             body: bufferStream
         };
 
+        console.log('Google Drive: Uploading file:', fileName, 'to folder:', FOLDER_ID);
+
         const response = await drive.files.create({
             requestBody: fileMetadata,
             media: media,
@@ -81,10 +87,13 @@ async function uploadReport(pdfBuffer, lead) {
             supportsAllDrives: true
         });
 
-        console.log('Uploaded to Google Drive:', response.data.name, response.data.id);
+        console.log('Google Drive: Upload successful!', response.data.name, response.data.id);
         return response.data;
     } catch (err) {
         console.error('Google Drive upload failed:', err.message);
+        if (err.response) {
+            console.error('Google Drive error details:', err.response.data);
+        }
         return null;
     }
 }
