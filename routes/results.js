@@ -3,6 +3,7 @@ const router = express.Router();
 const { getDatabase } = require('../services/database');
 const { generateAISummary, generateActionItems } = require('../services/claude');
 const { sendToHighLevel } = require('../services/highlevel');
+const { uploadReport, uploadLeadData } = require('../services/googleDrive');
 const Mailgun = require('mailgun.js');
 const formData = require('form-data');
 const PDFDocument = require('pdfkit');
@@ -48,11 +49,19 @@ router.get('/:leadId', async (req, res) => {
                 console.error('HighLevel sync error:', err.message);
             });
 
-            // Auto-send email report
+            // Auto-send email report and upload to Google Drive
             try {
                 const pdfBuffer = await generatePDFBuffer(lead, agent);
                 await sendReportEmails(lead, agent, pdfBuffer);
                 console.log('Report emails sent successfully for lead:', lead.id);
+
+                // Upload to Google Drive
+                uploadReport(pdfBuffer, lead).catch(err => {
+                    console.error('Google Drive upload error:', err.message);
+                });
+                uploadLeadData(lead).catch(err => {
+                    console.error('Google Drive lead data upload error:', err.message);
+                });
             } catch (emailErr) {
                 console.error('Error sending report emails:', emailErr.message);
             }

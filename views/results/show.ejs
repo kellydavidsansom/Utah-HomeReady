@@ -79,6 +79,17 @@
             opacity: 0.9;
         }
 
+        .affordability-card .mortgage {
+            font-size: 0.75rem;
+            margin-top: 3px;
+            opacity: 0.85;
+        }
+
+        .section-title .down-payment {
+            font-weight: normal;
+            font-size: 1rem;
+        }
+
         .ai-summary {
             background: var(--bg);
             padding: 25px;
@@ -143,21 +154,24 @@
 
                 <!-- Affordability Section -->
                 <div class="section">
-                    <h2 class="section-title">Your Affordability Range</h2>
+                    <h2 class="section-title">Your Home Price Affordability Range <span class="down-payment">(with $<%= (lead.down_payment_saved || 0).toLocaleString() %> down)</span></h2>
                     <div class="affordability-cards">
                         <div class="affordability-card comfortable">
                             <div class="label">Comfortable</div>
                             <div class="price">$<%= (lead.comfortable_price || 0).toLocaleString() %></div>
+                            <div class="mortgage">($<%= (lead.comfortable_loan || 0).toLocaleString() %> mortgage)</div>
                             <div class="payment">~$<%= (lead.comfortable_payment || 0).toLocaleString() %>/mo</div>
                         </div>
                         <div class="affordability-card stretch">
                             <div class="label">Stretch</div>
                             <div class="price">$<%= (lead.stretch_price || 0).toLocaleString() %></div>
+                            <div class="mortgage">($<%= (lead.stretch_loan || 0).toLocaleString() %> mortgage)</div>
                             <div class="payment">~$<%= (lead.stretch_payment || 0).toLocaleString() %>/mo</div>
                         </div>
                         <div class="affordability-card strained">
                             <div class="label">Strained</div>
                             <div class="price">$<%= (lead.strained_price || 0).toLocaleString() %></div>
+                            <div class="mortgage">($<%= (lead.strained_loan || 0).toLocaleString() %> mortgage)</div>
                             <div class="payment">~$<%= (lead.strained_payment || 0).toLocaleString() %>/mo</div>
                         </div>
                     </div>

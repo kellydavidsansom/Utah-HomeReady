@@ -124,12 +124,12 @@ function calculateAffordability(lead) {
     const stretch = (0.36 * monthlyIncome) - monthlyDebt;     // 36% DTI
     const strained = (0.40 * monthlyIncome) - monthlyDebt;    // 40% DTI
 
-    // Convert monthly payment to home price
-    function paymentToPrice(monthlyPayment) {
-        if (monthlyPayment <= 0) return 0;
+    // Convert monthly payment to home price and loan amount
+    function paymentToPriceAndLoan(monthlyPayment) {
+        if (monthlyPayment <= 0) return { homePrice: 0, loanAmount: 0 };
 
-        // Assumptions: 6.5% interest, 30-year term (more current rates)
-        const interestRate = 0.065;
+        // Assumptions: 5.8% interest, 30-year term (current market rates)
+        const interestRate = 0.058;
         const monthlyRate = interestRate / 12;
         const numPayments = 360;
 
@@ -142,22 +142,34 @@ function calculateAffordability(lead) {
 
         const loanAmount = piPayment / factor;
 
-        // Estimate home price based on down payment (assume 5% down if not much saved)
-        const estimatedDownPercent = Math.max(downPayment / (loanAmount * 1.05), 0.05);
-        const homePrice = loanAmount / (1 - estimatedDownPercent);
+        // Home price = loan amount + down payment
+        const homePrice = loanAmount + downPayment;
 
-        return Math.round(homePrice / 5000) * 5000; // Round to nearest $5k
+        return {
+            homePrice: Math.round(homePrice / 5000) * 5000, // Round to nearest $5k
+            loanAmount: Math.round(loanAmount / 1000) * 1000 // Round to nearest $1k
+        };
     }
 
+    const comfortableResult = paymentToPriceAndLoan(comfortable);
+    const stretchResult = paymentToPriceAndLoan(stretch);
+    const strainedResult = paymentToPriceAndLoan(strained);
+
     return {
-        comfortable: Math.max(0, paymentToPrice(comfortable)),
-        stretch: Math.max(0, paymentToPrice(stretch)),
-        strained: Math.max(0, paymentToPrice(strained)),
+        comfortable: Math.max(0, comfortableResult.homePrice),
+        stretch: Math.max(0, stretchResult.homePrice),
+        strained: Math.max(0, strainedResult.homePrice),
+        loanAmounts: {
+            comfortable: Math.max(0, comfortableResult.loanAmount),
+            stretch: Math.max(0, stretchResult.loanAmount),
+            strained: Math.max(0, strainedResult.loanAmount)
+        },
         monthlyPayments: {
             comfortable: Math.max(0, Math.round(comfortable)),
             stretch: Math.max(0, Math.round(stretch)),
             strained: Math.max(0, Math.round(strained))
-        }
+        },
+        downPayment: downPayment
     };
 }
 
@@ -176,9 +188,13 @@ function processLead(lead) {
         comfortable_price: affordability.comfortable,
         stretch_price: affordability.stretch,
         strained_price: affordability.strained,
+        comfortable_loan: affordability.loanAmounts.comfortable,
+        stretch_loan: affordability.loanAmounts.stretch,
+        strained_loan: affordability.loanAmounts.strained,
         comfortable_payment: affordability.monthlyPayments.comfortable,
         stretch_payment: affordability.monthlyPayments.stretch,
-        strained_payment: affordability.monthlyPayments.strained
+        strained_payment: affordability.monthlyPayments.strained,
+        down_payment_display: affordability.downPayment
     };
 }
 
