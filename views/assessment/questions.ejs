@@ -617,31 +617,40 @@
                 targetSection.style.display = 'block';
                 targetSection.classList.add('active');
                 console.log('Section ' + sectionNum + ' is now visible');
+                console.log('Section ' + sectionNum + ' display style: ' + targetSection.style.display);
+                console.log('Section ' + sectionNum + ' computed display: ' + window.getComputedStyle(targetSection).display);
+                alert('Section ' + sectionNum + ' should now be visible. Computed display: ' + window.getComputedStyle(targetSection).display);
             }
 
             currentSection = sectionNum;
             updateProgress();
 
             // Scroll to top of form
-            window.scrollTo(0, 200);
+            window.scrollTo(0, 0);
         }
 
         function validateCurrentSection() {
+            console.log('Validating section ' + currentSection);
             var section = document.querySelector('[data-section="' + currentSection + '"]');
-            if (!section) return true;
+            if (!section) {
+                console.log('Section not found!');
+                return true;
+            }
             var requiredInputs = section.querySelectorAll('input[required], select[required]');
+            console.log('Found ' + requiredInputs.length + ' required inputs');
             var valid = true;
             var firstError = null;
 
             for (var i = 0; i < requiredInputs.length; i++) {
                 var input = requiredInputs[i];
                 var value = input.value ? input.value.trim() : '';
+                console.log('Checking ' + input.name + ', value: "' + value + '"');
                 if (!value || value === '') {
                     valid = false;
                     input.classList.add('error');
                     input.style.borderColor = 'red';
                     if (!firstError) firstError = input;
-                    console.log('Validation failed for: ' + input.name);
+                    console.log('VALIDATION FAILED for: ' + input.name);
                 } else {
                     input.classList.remove('error');
                     input.style.borderColor = '';
@@ -650,9 +659,10 @@
 
             if (!valid && firstError) {
                 firstError.focus();
-                alert('Please answer all required questions before continuing.');
+                alert('Please select an option before continuing.');
             }
 
+            console.log('Validation result: ' + valid);
             return valid;
         }
 
