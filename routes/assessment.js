@@ -10,8 +10,10 @@ router.get('/start', (req, res) => {
     // Create a new lead with minimal data
     const result = db.prepare(`
         INSERT INTO leads (first_name, last_name, email, state)
-        VALUES ('', '', '', 'Utah')
-    `).run();
+        VALUES (?, ?, ?, ?)
+    `).run('New', 'Lead', 'pending@temp.com', 'Utah');
+
+    console.log('Created new lead with ID:', result.lastInsertRowid);
 
     // Redirect to the assessment form
     res.redirect(`/assessment/${result.lastInsertRowid}`);
