@@ -43,6 +43,9 @@
                     <% } %>
                 </div>
                 <div>
+                    <% if (lead.google_drive_folder_id) { %>
+                        <a href="https://drive.google.com/drive/folders/<%= lead.google_drive_folder_id %>" class="btn btn-primary" target="_blank">Open Drive Folder</a>
+                    <% } %>
                     <a href="/results/<%= lead.id %>" class="btn btn-outline" target="_blank">View Results</a>
                     <a href="/admin/leads/<%= lead.id %>/mismo" class="btn btn-secondary">Download MISMO</a>
                 </div>
@@ -91,6 +94,101 @@
                     <h3>AI Summary</h3>
                     <p><%= lead.ai_summary %></p>
                 </div>
+            <% } %>
+
+            <% if (lead.preapproval_submitted) { %>
+                <h2 style="margin-top: 40px; margin-bottom: 20px;">Pre-Approval Application</h2>
+                <p style="color: var(--gray); margin-bottom: 20px;">Submitted: <%= lead.preapproval_submitted_at ? new Date(lead.preapproval_submitted_at).toLocaleString() : 'N/A' %></p>
+
+                <div class="detail-grid">
+                    <div class="detail-section">
+                        <h3>Identity</h3>
+                        <div class="detail-row"><span class="detail-label">Date of Birth</span><span><%= lead.date_of_birth || '-' %></span></div>
+                        <div class="detail-row"><span class="detail-label">Citizenship</span><span><%= lead.citizenship_status || '-' %></span></div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Employment Details</h3>
+                        <div class="detail-row"><span class="detail-label">Employer</span><span><%= lead.employer_name || '-' %></span></div>
+                        <div class="detail-row"><span class="detail-label">Employer Address</span><span><%= lead.employer_address || '-' %></span></div>
+                        <div class="detail-row"><span class="detail-label">Job Title</span><span><%= lead.job_title || '-' %></span></div>
+                        <div class="detail-row"><span class="detail-label">Years at Job</span><span><%= lead.years_at_job || '-' %></span></div>
+                        <% if (lead.previous_employer_name) { %>
+                            <div class="detail-row"><span class="detail-label">Previous Employer</span><span><%= lead.previous_employer_name %></span></div>
+                            <div class="detail-row"><span class="detail-label">Previous Employer Years</span><span><%= lead.previous_employer_years || '-' %></span></div>
+                        <% } %>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Financial Details</h3>
+                        <div class="detail-row"><span class="detail-label">Monthly Income</span><span>$<%= (lead.monthly_income || 0).toLocaleString() %></span></div>
+                        <div class="detail-row"><span class="detail-label">Other Income</span><span>$<%= (lead.other_income_amount || 0).toLocaleString() %></span></div>
+                        <% if (lead.other_income_source) { %>
+                            <div class="detail-row"><span class="detail-label">Other Income Source</span><span><%= lead.other_income_source %></span></div>
+                        <% } %>
+                        <div class="detail-row"><span class="detail-label">Current Housing Payment</span><span>$<%= (lead.current_housing_payment || 0).toLocaleString() %></span></div>
+                        <div class="detail-row"><span class="detail-label">Monthly Debt Payments</span><span>$<%= (lead.monthly_debt_amount || 0).toLocaleString() %></span></div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Assets</h3>
+                        <div class="detail-row"><span class="detail-label">Checking Balance</span><span>$<%= (lead.checking_balance || 0).toLocaleString() %></span></div>
+                        <div class="detail-row"><span class="detail-label">Savings Balance</span><span>$<%= (lead.savings_balance || 0).toLocaleString() %></span></div>
+                        <div class="detail-row"><span class="detail-label">Retirement Balance</span><span>$<%= (lead.retirement_balance || 0).toLocaleString() %></span></div>
+                        <div class="detail-row"><span class="detail-label">Other Assets</span><span>$<%= (lead.other_assets_balance || 0).toLocaleString() %></span></div>
+                        <% if (lead.other_assets_description) { %>
+                            <div class="detail-row"><span class="detail-label">Other Assets Desc</span><span><%= lead.other_assets_description %></span></div>
+                        <% } %>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Liabilities & History</h3>
+                        <div class="detail-row"><span class="detail-label">Pays Alimony/Child Support</span><span><%= lead.pays_alimony_child_support || '-' %></span></div>
+                        <% if (lead.alimony_amount) { %>
+                            <div class="detail-row"><span class="detail-label">Alimony Amount</span><span>$<%= (lead.alimony_amount || 0).toLocaleString() %>/mo</span></div>
+                        <% } %>
+                        <div class="detail-row"><span class="detail-label">Bankruptcy (7 yrs)</span><span><%= lead.has_bankruptcy || '-' %></span></div>
+                        <% if (lead.bankruptcy_details) { %>
+                            <div class="detail-row"><span class="detail-label">Bankruptcy Details</span><span><%= lead.bankruptcy_details %></span></div>
+                        <% } %>
+                        <div class="detail-row"><span class="detail-label">Foreclosure (7 yrs)</span><span><%= lead.has_foreclosure || '-' %></span></div>
+                        <% if (lead.foreclosure_details) { %>
+                            <div class="detail-row"><span class="detail-label">Foreclosure Details</span><span><%= lead.foreclosure_details %></span></div>
+                        <% } %>
+                        <div class="detail-row"><span class="detail-label">Judgments/Liens</span><span><%= lead.has_judgments_liens || '-' %></span></div>
+                        <% if (lead.judgments_details) { %>
+                            <div class="detail-row"><span class="detail-label">Judgments Details</span><span><%= lead.judgments_details %></span></div>
+                        <% } %>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Property Intent</h3>
+                        <div class="detail-row"><span class="detail-label">Property Type</span><span><%= lead.property_type || '-' %></span></div>
+                        <div class="detail-row"><span class="detail-label">Property Use</span><span><%= lead.property_use || '-' %></span></div>
+                        <div class="detail-row"><span class="detail-label">Has Property in Mind</span><span><%= lead.has_property_in_mind || '-' %></span></div>
+                        <% if (lead.property_address) { %>
+                            <div class="detail-row"><span class="detail-label">Property Address</span><span><%= lead.property_address %></span></div>
+                        <% } %>
+                    </div>
+                </div>
+
+                <% if (typeof documents !== 'undefined' && documents && documents.length > 0) { %>
+                    <div class="detail-section mt-3">
+                        <h3>Uploaded Documents</h3>
+                        <% documents.forEach(function(doc) { %>
+                            <div class="detail-row">
+                                <span class="detail-label"><%= doc.document_type %></span>
+                                <span>
+                                    <% if (doc.google_drive_url) { %>
+                                        <a href="<%= doc.google_drive_url %>" target="_blank"><%= doc.file_name %></a>
+                                    <% } else { %>
+                                        <%= doc.file_name %>
+                                    <% } %>
+                                </span>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } %>
             <% } %>
         </div>
     </main>

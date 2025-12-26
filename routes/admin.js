@@ -118,12 +118,16 @@ router.get('/leads/:id', requireAdminAuth, (req, res) => {
         downPaymentSources = JSON.parse(lead.down_payment_sources || '[]');
     } catch (e) {}
 
+    // Get uploaded documents
+    const documents = db.prepare('SELECT * FROM documents WHERE lead_id = ? ORDER BY uploaded_at DESC').all(lead.id);
+
     res.render('admin/lead-detail', {
         title: `${lead.first_name} ${lead.last_name}`,
         lead,
         actionItems,
         targetCounties,
-        downPaymentSources
+        downPaymentSources,
+        documents
     });
 });
 
