@@ -89,13 +89,6 @@
                 </div>
             </div>
 
-            <% if (lead.ai_summary) { %>
-                <div class="detail-section mt-3">
-                    <h3>AI Summary</h3>
-                    <p><%= lead.ai_summary %></p>
-                </div>
-            <% } %>
-
             <% if (lead.preapproval_submitted) { %>
                 <h2 style="margin-top: 40px; margin-bottom: 20px;">Pre-Approval Application</h2>
                 <p style="color: var(--gray); margin-bottom: 20px;">Submitted: <%= lead.preapproval_submitted_at ? new Date(lead.preapproval_submitted_at).toLocaleString() : 'N/A' %></p>
@@ -189,6 +182,13 @@
                         <% }); %>
                     </div>
                 <% } %>
+            <% } %>
+
+            <% if (lead.ai_summary) { %>
+                <div class="detail-section mt-3">
+                    <h3>AI Summary</h3>
+                    <p><%= lead.ai_summary %></p>
+                </div>
             <% } %>
         </div>
     </main>
