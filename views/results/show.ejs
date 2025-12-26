@@ -120,16 +120,9 @@
 
     <main class="main-content">
         <div class="container">
-            <% if (typeof emailed !== 'undefined' && emailed) { %>
             <div class="alert alert-success" style="background: #22c55e; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
-                Your report has been emailed! Check your inbox.
+                Your personalized report has been emailed to you!
             </div>
-            <% } %>
-            <% if (typeof error !== 'undefined' && error === 'email') { %>
-            <div class="alert alert-error" style="background: #ef4444; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
-                There was an error sending the email. Please try again.
-            </div>
-            <% } %>
             <div class="results-container">
                 <!-- Results Header -->
                 <div class="results-header <%= lead.readiness_level %>">
@@ -203,7 +196,6 @@
                         <p>Get fully pre-approved and start your home search with confidence.</p>
                         <div class="cta-buttons">
                             <a href="/preapproval/<%= lead.id %>" class="btn btn-primary btn-large">Get Pre-Approved</a>
-                            <a href="/results/<%= lead.id %>/email-report" class="btn btn-outline">Email Me My Report</a>
                         </div>
                     <% } else { %>
                         <h2>Let's Get You Home Ready!</h2>
@@ -214,7 +206,6 @@
                             <% } else { %>
                                 <a href="/help/<%= lead.id %>/boost" class="btn btn-primary btn-large">See Ways to Boost Your Buying Power</a>
                             <% } %>
-                            <a href="/results/<%= lead.id %>/email-report" class="btn btn-outline">Email Me My Report</a>
                         </div>
                     <% } %>
                 </div>

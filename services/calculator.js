@@ -128,13 +128,13 @@ function calculateAffordability(lead) {
     function paymentToPrice(monthlyPayment) {
         if (monthlyPayment <= 0) return 0;
 
-        // Assumptions: 7% interest, 30-year term
-        const interestRate = 0.07;
+        // Assumptions: 6.5% interest, 30-year term (more current rates)
+        const interestRate = 0.065;
         const monthlyRate = interestRate / 12;
         const numPayments = 360;
 
-        // P&I is about 68% of total payment (rest is taxes, insurance, PMI)
-        const piPayment = monthlyPayment * 0.68;
+        // P&I is about 78% of total payment (22% for taxes, insurance, PMI)
+        const piPayment = monthlyPayment * 0.78;
 
         // P&I = P * [r(1+r)^n] / [(1+r)^n - 1]
         const factor = (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) /
@@ -142,9 +142,9 @@ function calculateAffordability(lead) {
 
         const loanAmount = piPayment / factor;
 
-        // Estimate home price based on down payment
-        const downPaymentPercent = Math.max(downPayment / (loanAmount + downPayment), 0.035);
-        const homePrice = loanAmount / (1 - downPaymentPercent);
+        // Estimate home price based on down payment (assume 5% down if not much saved)
+        const estimatedDownPercent = Math.max(downPayment / (loanAmount * 1.05), 0.05);
+        const homePrice = loanAmount / (1 - estimatedDownPercent);
 
         return Math.round(homePrice / 5000) * 5000; // Round to nearest $5k
     }

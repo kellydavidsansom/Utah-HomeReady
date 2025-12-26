@@ -48,7 +48,14 @@ router.get('/:leadId', async (req, res) => {
                 console.error('HighLevel sync error:', err.message);
             });
 
-            // TODO: Send emails to lead, agent, and Kelly
+            // Auto-send email report
+            try {
+                const pdfBuffer = await generatePDFBuffer(lead, agent);
+                await sendReportEmails(lead, agent, pdfBuffer);
+                console.log('Report emails sent successfully for lead:', lead.id);
+            } catch (emailErr) {
+                console.error('Error sending report emails:', emailErr.message);
+            }
 
         } catch (error) {
             console.error('Error generating AI content:', error);
@@ -307,6 +314,84 @@ router.get('/:leadId/email-report', async (req, res) => {
         res.redirect(`/results/${lead.id}?error=email`);
     }
 });
+
+// Helper function to send report emails
+async function sendReportEmails(lead, agent, pdfBuffer) {
+    const mailgun = new Mailgun(formData);
+    const mg = mailgun.client({
+        username: 'api',
+        key: process.env.MAILGUN_API_KEY || 'key-missing'
+    });
+
+    const domain = process.env.MAILGUN_DOMAIN || 'mg.clearpathutah.com';
+    const kellyEmail = process.env.KELLY_EMAIL || 'hello@clearpathutah.com';
+
+    // Email to client
+    await mg.messages.create(domain, {
+        from: `ClearPath Utah Mortgage <noreply@${domain}>`,
+        to: lead.email,
+        subject: `Your Home Readiness Report - ${lead.first_name}`,
+        html: `
+            <h2>Hi ${lead.first_name}!</h2>
+            <p>Thank you for completing the Utah Home Ready Check. Your personalized report is attached.</p>
+            <p><strong>Your Readiness Score:</strong> ${lead.readiness_score}/100</p>
+            <p><strong>Affordability Range:</strong> $${(lead.comfortable_price || 0).toLocaleString()} - $${(lead.strained_price || 0).toLocaleString()}</p>
+            <p>Ready to take the next step? Reply to this email or call me at (801) 891-1846.</p>
+            <p>Best,<br>Kelly Sansom<br>ClearPath Utah Mortgage<br>NMLS #2510508</p>
+        `,
+        attachment: {
+            data: pdfBuffer,
+            filename: `home-readiness-report-${lead.first_name.toLowerCase()}.pdf`
+        }
+    });
+
+    // Email to Kelly
+    await mg.messages.create(domain, {
+        from: `Utah Home Ready Check <noreply@${domain}>`,
+        to: kellyEmail,
+        subject: `New Lead: ${lead.first_name} ${lead.last_name} - ${lead.readiness_level.toUpperCase()}`,
+        html: `
+            <h2>New Lead from Utah Home Ready Check</h2>
+            <p><strong>Name:</strong> ${lead.first_name} ${lead.last_name}</p>
+            <p><strong>Email:</strong> ${lead.email}</p>
+            <p><strong>Phone:</strong> ${lead.phone || 'Not provided'}</p>
+            <p><strong>Readiness Level:</strong> ${lead.readiness_level.toUpperCase()}</p>
+            <p><strong>Readiness Score:</strong> ${lead.readiness_score}/100</p>
+            <p><strong>Income:</strong> $${(lead.gross_annual_income || 0).toLocaleString()}</p>
+            <p><strong>Comfortable Price:</strong> $${(lead.comfortable_price || 0).toLocaleString()}</p>
+            <p><strong>Timeline:</strong> ${lead.timeline}</p>
+            ${agent ? `<p><strong>Agent:</strong> ${agent.first_name} ${agent.last_name} (${agent.email})</p>` : ''}
+        `,
+        attachment: {
+            data: pdfBuffer,
+            filename: `home-readiness-report-${lead.first_name.toLowerCase()}-${lead.last_name.toLowerCase()}.pdf`
+        }
+    });
+
+    // If there's an agent, email them too
+    if (agent && agent.email) {
+        await mg.messages.create(domain, {
+            from: `Utah Home Ready Check <noreply@${domain}>`,
+            to: agent.email,
+            subject: `Your Lead: ${lead.first_name} ${lead.last_name} - Home Ready Report`,
+            html: `
+                <h2>Your lead has completed the Home Ready Check!</h2>
+                <p><strong>Name:</strong> ${lead.first_name} ${lead.last_name}</p>
+                <p><strong>Email:</strong> ${lead.email}</p>
+                <p><strong>Phone:</strong> ${lead.phone || 'Not provided'}</p>
+                <p><strong>Readiness Level:</strong> ${lead.readiness_level.toUpperCase()}</p>
+                <p><strong>Readiness Score:</strong> ${lead.readiness_score}/100</p>
+                <p><strong>Comfortable Price:</strong> $${(lead.comfortable_price || 0).toLocaleString()}</p>
+                <p><strong>Timeline:</strong> ${lead.timeline}</p>
+                <p>The full report is attached. Kelly Sansom from ClearPath Utah Mortgage will be reaching out to help get them pre-approved.</p>
+            `,
+            attachment: {
+                data: pdfBuffer,
+                filename: `home-readiness-report-${lead.first_name.toLowerCase()}.pdf`
+            }
+        });
+    }
+}
 
 // Helper function to generate PDF buffer
 function generatePDFBuffer(lead, agent) {
