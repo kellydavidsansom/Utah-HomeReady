@@ -120,6 +120,16 @@
 
     <main class="main-content">
         <div class="container">
+            <% if (typeof emailed !== 'undefined' && emailed) { %>
+            <div class="alert alert-success" style="background: #22c55e; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                Your report has been emailed! Check your inbox.
+            </div>
+            <% } %>
+            <% if (typeof error !== 'undefined' && error === 'email') { %>
+            <div class="alert alert-error" style="background: #ef4444; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                There was an error sending the email. Please try again.
+            </div>
+            <% } %>
             <div class="results-container">
                 <!-- Results Header -->
                 <div class="results-header <%= lead.readiness_level %>">
@@ -165,7 +175,7 @@
                 <div class="section">
                     <h2 class="section-title">Your Personalized Summary</h2>
                     <div class="ai-summary">
-                        <%= lead.ai_summary.split('\n\n').map(p => `<p>${p}</p>`).join('') %>
+                        <%- lead.ai_summary %>
                     </div>
                 </div>
                 <% } %>
@@ -193,7 +203,7 @@
                         <p>Get fully pre-approved and start your home search with confidence.</p>
                         <div class="cta-buttons">
                             <a href="/preapproval/<%= lead.id %>" class="btn btn-primary btn-large">Get Pre-Approved</a>
-                            <a href="/results/<%= lead.id %>/pdf" class="btn btn-outline">Download PDF Report</a>
+                            <a href="/results/<%= lead.id %>/email-report" class="btn btn-outline">Email Me My Report</a>
                         </div>
                     <% } else { %>
                         <h2>Let's Get You Home Ready!</h2>
@@ -204,7 +214,7 @@
                             <% } else { %>
                                 <a href="/help/<%= lead.id %>/boost" class="btn btn-primary btn-large">See Ways to Boost Your Buying Power</a>
                             <% } %>
-                            <a href="/results/<%= lead.id %>/pdf" class="btn btn-outline">Download PDF Report</a>
+                            <a href="/results/<%= lead.id %>/email-report" class="btn btn-outline">Email Me My Report</a>
                         </div>
                     <% } %>
                 </div>
