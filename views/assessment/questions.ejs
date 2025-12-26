@@ -497,6 +497,17 @@
         // Initialize when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Assessment form loaded');
+
+            // Hide all sections first, then show section 1
+            var allSections = document.querySelectorAll('.assessment-section');
+            for (var s = 0; s < allSections.length; s++) {
+                allSections[s].style.display = 'none';
+            }
+            var section1 = document.querySelector('[data-section="1"]');
+            if (section1) {
+                section1.style.display = 'block';
+            }
+
             updateProgress();
 
             // Watch for co-borrower selection
@@ -568,13 +579,15 @@
             console.log('Showing section: ' + sectionNum);
             var sections = document.querySelectorAll('.assessment-section');
             for (var i = 0; i < sections.length; i++) {
+                sections[i].style.display = 'none';
                 sections[i].classList.remove('active');
             }
 
             var targetSection = document.querySelector('[data-section="' + sectionNum + '"]');
             if (targetSection) {
+                targetSection.style.display = 'block';
                 targetSection.classList.add('active');
-                console.log('Section ' + sectionNum + ' is now active');
+                console.log('Section ' + sectionNum + ' is now visible');
             }
 
             currentSection = sectionNum;
@@ -587,18 +600,28 @@
         function validateCurrentSection() {
             var section = document.querySelector('[data-section="' + currentSection + '"]');
             if (!section) return true;
-            var requiredInputs = section.querySelectorAll('[required]');
+            var requiredInputs = section.querySelectorAll('input[required], select[required]');
             var valid = true;
+            var firstError = null;
 
             for (var i = 0; i < requiredInputs.length; i++) {
                 var input = requiredInputs[i];
-                if (!input.value) {
+                var value = input.value ? input.value.trim() : '';
+                if (!value || value === '') {
                     valid = false;
                     input.classList.add('error');
+                    input.style.borderColor = 'red';
+                    if (!firstError) firstError = input;
                     console.log('Validation failed for: ' + input.name);
                 } else {
                     input.classList.remove('error');
+                    input.style.borderColor = '';
                 }
+            }
+
+            if (!valid && firstError) {
+                firstError.focus();
+                alert('Please answer all required questions before continuing.');
             }
 
             return valid;
