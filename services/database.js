@@ -187,13 +187,19 @@ const dbWrapper = {
     prepare: function(sql) {
         return {
             run: function(...params) {
-                db.run(sql, params);
+                if (params.length > 0) {
+                    db.run(sql, params);
+                } else {
+                    db.run(sql);
+                }
                 saveDatabase();
                 return { lastInsertRowid: db.exec("SELECT last_insert_rowid()")[0]?.values[0]?.[0] || 0, changes: db.getRowsModified() };
             },
             get: function(...params) {
                 const stmt = db.prepare(sql);
-                stmt.bind(params);
+                if (params.length > 0) {
+                    stmt.bind(params);
+                }
                 if (stmt.step()) {
                     const row = stmt.getAsObject();
                     stmt.free();
@@ -204,7 +210,9 @@ const dbWrapper = {
             },
             all: function(...params) {
                 const stmt = db.prepare(sql);
-                stmt.bind(params);
+                if (params.length > 0) {
+                    stmt.bind(params);
+                }
                 const results = [];
                 while (stmt.step()) {
                     results.push(stmt.getAsObject());
