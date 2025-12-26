@@ -96,7 +96,7 @@
                         </div>
 
                         <div class="nav-buttons">
-                            <button type="button" class="btn btn-primary" onclick="nextSection()">Continue</button>
+                            <button type="button" class="btn btn-primary btn-next">Continue</button>
                         </div>
                     </div>
 
@@ -211,8 +211,8 @@
                         </div>
 
                         <div class="nav-buttons">
-                            <button type="button" class="btn btn-back" onclick="prevSection()">Back</button>
-                            <button type="button" class="btn btn-primary" onclick="nextSection()">Continue</button>
+                            <button type="button" class="btn btn-back btn-prev">Back</button>
+                            <button type="button" class="btn btn-primary btn-next">Continue</button>
                         </div>
                     </div>
 
@@ -238,8 +238,8 @@
                         </div>
 
                         <div class="nav-buttons">
-                            <button type="button" class="btn btn-back" onclick="prevSection()">Back</button>
-                            <button type="button" class="btn btn-primary" onclick="nextSection()">Continue</button>
+                            <button type="button" class="btn btn-back btn-prev">Back</button>
+                            <button type="button" class="btn btn-primary btn-next">Continue</button>
                         </div>
                     </div>
 
@@ -285,8 +285,8 @@
                         </div>
 
                         <div class="nav-buttons">
-                            <button type="button" class="btn btn-back" onclick="prevSection()">Back</button>
-                            <button type="button" class="btn btn-primary" onclick="nextSection()">Continue</button>
+                            <button type="button" class="btn btn-back btn-prev">Back</button>
+                            <button type="button" class="btn btn-primary btn-next">Continue</button>
                         </div>
                     </div>
 
@@ -363,8 +363,8 @@
                         </div>
 
                         <div class="nav-buttons">
-                            <button type="button" class="btn btn-back" onclick="prevSection()">Back</button>
-                            <button type="button" class="btn btn-primary" onclick="nextSection()">Continue</button>
+                            <button type="button" class="btn btn-back btn-prev">Back</button>
+                            <button type="button" class="btn btn-primary btn-next">Continue</button>
                         </div>
                     </div>
 
@@ -477,7 +477,7 @@
                         </div>
 
                         <div class="nav-buttons">
-                            <button type="button" class="btn btn-back" onclick="prevSection()">Back</button>
+                            <button type="button" class="btn btn-back btn-prev">Back</button>
                             <button type="submit" class="btn btn-primary btn-large">See My Results</button>
                         </div>
                     </div>
@@ -502,6 +502,22 @@
             document.getElementById('coborrowerStatus').addEventListener('change', function() {
                 hasCoborrower = this.value !== 'No, buying solo' && this.value !== '';
                 updateCoborrowerVisibility();
+            });
+
+            // Add click handlers for next buttons
+            document.querySelectorAll('.btn-next').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    nextSection();
+                });
+            });
+
+            // Add click handlers for back buttons
+            document.querySelectorAll('.btn-prev').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    prevSection();
+                });
             });
         });
 
