@@ -3,6 +3,20 @@ const router = express.Router();
 const { getDatabase } = require('../services/database');
 const { processLead } = require('../services/calculator');
 
+// Start a new assessment (no agent)
+router.get('/start', (req, res) => {
+    const db = getDatabase();
+
+    // Create a new lead with minimal data
+    const result = db.prepare(`
+        INSERT INTO leads (first_name, last_name, email, state)
+        VALUES ('', '', '', 'Utah')
+    `).run();
+
+    // Redirect to the assessment form
+    res.redirect(`/assessment/${result.lastInsertRowid}`);
+});
+
 // Assessment questions flow
 router.get('/:leadId', (req, res) => {
     const db = getDatabase();
