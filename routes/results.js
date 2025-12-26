@@ -3,7 +3,7 @@ const router = express.Router();
 const { getDatabase } = require('../services/database');
 const { generateAISummary, generateActionItems } = require('../services/claude');
 const { sendToHighLevel } = require('../services/highlevel');
-const { uploadReport, uploadLeadData } = require('../services/googleDrive');
+const { uploadLeadToDrive } = require('../services/googleDrive');
 const Mailgun = require('mailgun.js');
 const formData = require('form-data');
 const PDFDocument = require('pdfkit');
@@ -55,12 +55,9 @@ router.get('/:leadId', async (req, res) => {
                 await sendReportEmails(lead, agent, pdfBuffer);
                 console.log('Report emails sent successfully for lead:', lead.id);
 
-                // Upload to Google Drive
-                uploadReport(pdfBuffer, lead).catch(err => {
+                // Upload to Google Drive (creates folder per lead)
+                uploadLeadToDrive(pdfBuffer, lead).catch(err => {
                     console.error('Google Drive upload error:', err.message);
-                });
-                uploadLeadData(lead).catch(err => {
-                    console.error('Google Drive lead data upload error:', err.message);
                 });
             } catch (emailErr) {
                 console.error('Error sending report emails:', emailErr.message);
