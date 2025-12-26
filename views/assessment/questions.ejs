@@ -615,18 +615,18 @@
             var targetSection = document.querySelector('[data-section="' + sectionNum + '"]');
             if (targetSection) {
                 targetSection.style.display = 'block';
+                targetSection.style.visibility = 'visible';
+                targetSection.style.opacity = '1';
+                targetSection.style.height = 'auto';
                 targetSection.classList.add('active');
                 console.log('Section ' + sectionNum + ' is now visible');
-                console.log('Section ' + sectionNum + ' display style: ' + targetSection.style.display);
-                console.log('Section ' + sectionNum + ' computed display: ' + window.getComputedStyle(targetSection).display);
-                alert('Section ' + sectionNum + ' should now be visible. Computed display: ' + window.getComputedStyle(targetSection).display);
+
+                // Scroll the section into view
+                targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
 
             currentSection = sectionNum;
             updateProgress();
-
-            // Scroll to top of form
-            window.scrollTo(0, 0);
         }
 
         function validateCurrentSection() {
@@ -636,8 +636,25 @@
                 console.log('Section not found!');
                 return true;
             }
-            var requiredInputs = section.querySelectorAll('input[required], select[required]');
+            // Find all inputs and selects in this section
+            var allInputs = section.querySelectorAll('input, select');
+            console.log('Total inputs/selects in section: ' + allInputs.length);
+
+            var requiredInputs = section.querySelectorAll('[required]');
             console.log('Found ' + requiredInputs.length + ' required inputs');
+
+            // Also check by ID for section 1
+            if (currentSection === 1) {
+                var coborrowerSelect = document.getElementById('coborrowerStatus');
+                if (coborrowerSelect) {
+                    console.log('coborrowerStatus value: "' + coborrowerSelect.value + '"');
+                    if (!coborrowerSelect.value || coborrowerSelect.value === '') {
+                        coborrowerSelect.style.borderColor = 'red';
+                        alert('Please select who is buying before continuing.');
+                        return false;
+                    }
+                }
+            }
             var valid = true;
             var firstError = null;
 
