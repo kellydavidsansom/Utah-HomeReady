@@ -490,106 +490,128 @@
 
     <script src="/js/main.js"></script>
     <script>
-        let currentSection = 1;
-        const totalSections = 6;
-        let hasCoborrower = false;
+        var currentSection = 1;
+        var totalSections = 6;
+        var hasCoborrower = false;
 
-        // Initialize
+        // Initialize when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Assessment form loaded');
             updateProgress();
 
             // Watch for co-borrower selection
-            document.getElementById('coborrowerStatus').addEventListener('change', function() {
-                hasCoborrower = this.value !== 'No, buying solo' && this.value !== '';
-                updateCoborrowerVisibility();
-            });
+            var coborrowerSelect = document.getElementById('coborrowerStatus');
+            if (coborrowerSelect) {
+                coborrowerSelect.addEventListener('change', function() {
+                    hasCoborrower = this.value !== 'No, buying solo' && this.value !== '';
+                    updateCoborrowerVisibility();
+                });
+            }
 
             // Add click handlers for next buttons
-            document.querySelectorAll('.btn-next').forEach(function(btn) {
-                btn.addEventListener('click', function(e) {
+            var nextButtons = document.querySelectorAll('.btn-next');
+            for (var i = 0; i < nextButtons.length; i++) {
+                nextButtons[i].addEventListener('click', function(e) {
                     e.preventDefault();
+                    console.log('Next button clicked');
                     nextSection();
                 });
-            });
+            }
 
             // Add click handlers for back buttons
-            document.querySelectorAll('.btn-prev').forEach(function(btn) {
-                btn.addEventListener('click', function(e) {
+            var prevButtons = document.querySelectorAll('.btn-prev');
+            for (var j = 0; j < prevButtons.length; j++) {
+                prevButtons[j].addEventListener('click', function(e) {
                     e.preventDefault();
+                    console.log('Back button clicked');
                     prevSection();
                 });
-            });
+            }
         });
 
         function updateCoborrowerVisibility() {
-            const coborrowerSection = document.querySelector('[data-section="3"]');
-            const coborrowerIncomeSection = document.getElementById('coborrowerIncomeSection');
-            const coborrowerInputs = coborrowerSection.querySelectorAll('input');
+            var coborrowerSection = document.querySelector('[data-section="3"]');
+            var coborrowerIncomeSection = document.getElementById('coborrowerIncomeSection');
+            if (!coborrowerSection) return;
+            var coborrowerInputs = coborrowerSection.querySelectorAll('input');
 
             if (hasCoborrower) {
                 coborrowerSection.classList.remove('hidden');
-                coborrowerIncomeSection.classList.remove('hidden');
-                coborrowerInputs.forEach(input => input.required = true);
+                if (coborrowerIncomeSection) coborrowerIncomeSection.classList.remove('hidden');
+                for (var i = 0; i < coborrowerInputs.length; i++) {
+                    coborrowerInputs[i].required = true;
+                }
             } else {
                 coborrowerSection.classList.add('hidden');
-                coborrowerIncomeSection.classList.add('hidden');
-                coborrowerInputs.forEach(input => input.required = false);
+                if (coborrowerIncomeSection) coborrowerIncomeSection.classList.add('hidden');
+                for (var i = 0; i < coborrowerInputs.length; i++) {
+                    coborrowerInputs[i].required = false;
+                }
             }
         }
 
         function updateProgress() {
-            document.querySelectorAll('.progress-step').forEach((step, index) => {
-                const sectionNum = index + 1;
-                step.classList.remove('active', 'complete');
+            var steps = document.querySelectorAll('.progress-step');
+            for (var i = 0; i < steps.length; i++) {
+                var sectionNum = i + 1;
+                steps[i].classList.remove('active', 'complete');
 
                 if (sectionNum < currentSection) {
-                    step.classList.add('complete');
+                    steps[i].classList.add('complete');
                 } else if (sectionNum === currentSection) {
-                    step.classList.add('active');
+                    steps[i].classList.add('active');
                 }
-            });
+            }
         }
 
         function showSection(sectionNum) {
-            document.querySelectorAll('.assessment-section').forEach(section => {
-                section.classList.remove('active');
-            });
+            console.log('Showing section: ' + sectionNum);
+            var sections = document.querySelectorAll('.assessment-section');
+            for (var i = 0; i < sections.length; i++) {
+                sections[i].classList.remove('active');
+            }
 
-            const targetSection = document.querySelector(`[data-section="${sectionNum}"]`);
+            var targetSection = document.querySelector('[data-section="' + sectionNum + '"]');
             if (targetSection) {
                 targetSection.classList.add('active');
+                console.log('Section ' + sectionNum + ' is now active');
             }
 
             currentSection = sectionNum;
             updateProgress();
 
             // Scroll to top of form
-            window.scrollTo({ top: 200, behavior: 'smooth' });
+            window.scrollTo(0, 200);
         }
 
         function validateCurrentSection() {
-            const section = document.querySelector(`[data-section="${currentSection}"]`);
-            const requiredInputs = section.querySelectorAll('[required]');
-            let valid = true;
+            var section = document.querySelector('[data-section="' + currentSection + '"]');
+            if (!section) return true;
+            var requiredInputs = section.querySelectorAll('[required]');
+            var valid = true;
 
-            requiredInputs.forEach(input => {
+            for (var i = 0; i < requiredInputs.length; i++) {
+                var input = requiredInputs[i];
                 if (!input.value) {
                     valid = false;
                     input.classList.add('error');
+                    console.log('Validation failed for: ' + input.name);
                 } else {
                     input.classList.remove('error');
                 }
-            });
+            }
 
             return valid;
         }
 
         function nextSection() {
+            console.log('nextSection called, current: ' + currentSection);
             if (!validateCurrentSection()) {
+                console.log('Validation failed');
                 return;
             }
 
-            let nextSectionNum = currentSection + 1;
+            var nextSectionNum = currentSection + 1;
 
             // Skip co-borrower section if buying solo
             if (nextSectionNum === 3 && !hasCoborrower) {
@@ -602,7 +624,7 @@
         }
 
         function prevSection() {
-            let prevSectionNum = currentSection - 1;
+            var prevSectionNum = currentSection - 1;
 
             // Skip co-borrower section if buying solo
             if (prevSectionNum === 3 && !hasCoborrower) {
@@ -612,20 +634,6 @@
             if (prevSectionNum >= 1) {
                 showSection(prevSectionNum);
             }
-        }
-
-        // Update borrower/coborrower names in labels
-        function updateNames() {
-            const firstName = document.querySelector('input[name="first_name"]').value || 'Your';
-            const coborrowerFirstName = document.querySelector('input[name="coborrower_first_name"]').value || "Co-Borrower's";
-
-            document.querySelectorAll('.borrower-name').forEach(el => {
-                el.textContent = firstName ? `${firstName}'s` : 'Your';
-            });
-
-            document.querySelectorAll('.coborrower-name').forEach(el => {
-                el.textContent = coborrowerFirstName ? `${coborrowerFirstName}'s` : "Co-Borrower's";
-            });
         }
     </script>
 </body>
