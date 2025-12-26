@@ -5,50 +5,709 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %> | Utah Home Ready Check</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .preapproval-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        .section-subtitle {
+            color: var(--gray);
+            margin-bottom: 25px;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .nav-buttons .btn {
+            flex: 1;
+        }
+        .btn-back {
+            background: var(--white);
+            color: var(--dark);
+            border: 2px solid var(--border);
+        }
+        .btn-back:hover {
+            background: var(--bg);
+        }
+        .hidden {
+            display: none !important;
+        }
+        .card.preapproval-section {
+            display: none !important;
+        }
+        .card.preapproval-section.active {
+            display: block !important;
+        }
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        @media (max-width: 500px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .info-box {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .previous-section {
+            background: var(--bg);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        .file-upload-group {
+            margin-bottom: 20px;
+        }
+        .file-upload-group label {
+            display: block;
+            margin-bottom: 8px;
+        }
+        .file-input-wrapper {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .file-input-wrapper:hover {
+            border-color: var(--primary);
+        }
+        .file-input-wrapper input {
+            display: none;
+        }
+        .file-input-wrapper .upload-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .file-input-wrapper .upload-text {
+            color: var(--gray);
+        }
+        .file-input-wrapper .file-names {
+            margin-top: 10px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .loading-overlay.active {
+            display: flex;
+        }
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 6px solid var(--border);
+            border-top: 6px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: 600;
+            text-align: center;
+        }
+        .loading-subtext {
+            font-size: 1rem;
+            color: var(--gray);
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Uploading your documents...</div>
+        <div class="loading-subtext">This may take a moment</div>
+    </div>
+
     <%- include('../partials/header', { agent }) %>
 
     <main class="main-content">
         <div class="container">
-            <div class="card" style="max-width: 600px; margin: 0 auto;">
-                <h1 class="text-center mb-2">Get Pre-Approved</h1>
-                <p class="text-center mb-3" style="color: var(--gray);">Upload your documents to start the pre-approval process.</p>
-
-                <div class="alert alert-info">
-                    <strong>Documents Needed:</strong>
-                    <ul style="margin: 10px 0 0 20px;">
-                        <li>Last 2 years of tax returns</li>
-                        <li>Recent pay stubs (last 30 days)</li>
-                        <li>Bank statements (last 2 months)</li>
-                        <li>Photo ID</li>
-                    </ul>
+            <div class="preapproval-container">
+                <!-- Progress Bar -->
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-step" data-section="1"></div>
+                    <div class="progress-step" data-section="2"></div>
+                    <div class="progress-step" data-section="3"></div>
+                    <div class="progress-step" data-section="4"></div>
+                    <div class="progress-step" data-section="5"></div>
+                    <div class="progress-step" data-section="6"></div>
+                    <div class="progress-step" data-section="7"></div>
                 </div>
 
-                <form action="/preapproval/<%= lead.id %>/submit" method="POST" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label class="form-label">Tax Returns</label>
-                        <input type="file" name="tax_returns" class="form-input" multiple accept=".pdf,.jpg,.png">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Pay Stubs</label>
-                        <input type="file" name="pay_stubs" class="form-input" multiple accept=".pdf,.jpg,.png">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Bank Statements</label>
-                        <input type="file" name="bank_statements" class="form-input" multiple accept=".pdf,.jpg,.png">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Photo ID</label>
-                        <input type="file" name="id" class="form-input" accept=".pdf,.jpg,.png">
+                <form id="preapprovalForm" action="/preapproval/<%= lead.id %>/submit" method="POST" enctype="multipart/form-data">
+                    <!-- Section 1: Identity -->
+                    <div class="card preapproval-section active" data-section="1">
+                        <h2 class="section-title">Identity Information</h2>
+                        <p class="section-subtitle">Let's verify your identity</p>
+
+                        <div class="input-row">
+                            <div class="form-group">
+                                <label class="form-label">Date of Birth</label>
+                                <input type="date" name="date_of_birth" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Citizenship Status</label>
+                                <select name="citizenship_status" class="form-select" required>
+                                    <option value="">Select...</option>
+                                    <option value="US Citizen">US Citizen</option>
+                                    <option value="Permanent Resident">Permanent Resident</option>
+                                    <option value="Non-Permanent Resident">Non-Permanent Resident</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Social Security Number</label>
+                            <div class="info-box">
+                                <strong>For your security</strong>
+                                We will call you directly to collect your SSN over the phone rather than having you enter it online. Please leave this blank - Kelly will call you to complete this step.
+                            </div>
+                            <input type="text" name="ssn_placeholder" class="form-input" placeholder="We'll call you for this" disabled style="background: var(--bg);">
+                        </div>
+
+                        <div class="nav-buttons">
+                            <button type="button" class="btn btn-primary btn-next">Continue</button>
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-block">Submit Documents</button>
+                    <!-- Section 2: Employment -->
+                    <div class="card preapproval-section" data-section="2">
+                        <h2 class="section-title">Employment Information</h2>
+                        <p class="section-subtitle">Tell us about your current job</p>
+
+                        <div class="form-group">
+                            <label class="form-label">Employer Name</label>
+                            <input type="text" name="employer_name" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Employer Address</label>
+                            <input type="text" name="employer_address" class="form-input" placeholder="Street, City, State, Zip">
+                        </div>
+
+                        <div class="input-row">
+                            <div class="form-group">
+                                <label class="form-label">Your Job Title</label>
+                                <input type="text" name="job_title" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Time at This Job</label>
+                                <select name="time_at_job" class="form-select" required>
+                                    <option value="">Select...</option>
+                                    <option value="Less than 6 months">Less than 6 months</option>
+                                    <option value="6 months - 1 year">6 months - 1 year</option>
+                                    <option value="1-2 years">1-2 years</option>
+                                    <option value="2-5 years">2-5 years</option>
+                                    <option value="5+ years">5+ years</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Work Phone (optional)</label>
+                            <input type="tel" name="work_phone" class="form-input phone-input">
+                        </div>
+
+                        <div id="previousEmployerSection" class="previous-section hidden">
+                            <h3 style="margin-bottom: 15px;">Previous Employer</h3>
+                            <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 15px;">Since you've been at your current job less than 2 years, please provide previous employer info.</p>
+
+                            <div class="form-group">
+                                <label class="form-label">Previous Employer Name</label>
+                                <input type="text" name="previous_employer_name" class="form-input">
+                            </div>
+                            <div class="input-row">
+                                <div class="form-group">
+                                    <label class="form-label">Previous Job Title</label>
+                                    <input type="text" name="previous_job_title" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Time at Previous Job</label>
+                                    <select name="previous_time_at_job" class="form-select">
+                                        <option value="">Select...</option>
+                                        <option value="Less than 1 year">Less than 1 year</option>
+                                        <option value="1-2 years">1-2 years</option>
+                                        <option value="2-5 years">2-5 years</option>
+                                        <option value="5+ years">5+ years</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="nav-buttons">
+                            <button type="button" class="btn btn-back btn-prev">Back</button>
+                            <button type="button" class="btn btn-primary btn-next">Continue</button>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Financial Details -->
+                    <div class="card preapproval-section" data-section="3">
+                        <h2 class="section-title">Financial Details</h2>
+                        <p class="section-subtitle">Help us understand your finances</p>
+
+                        <div class="form-group">
+                            <label class="form-label">Monthly Gross Income (before taxes)</label>
+                            <input type="text" name="monthly_gross_income" class="form-input currency-input" placeholder="e.g., 6000" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Other Monthly Income (if any)</label>
+                            <span class="form-helper">Rental income, investments, alimony received, etc.</span>
+                            <input type="text" name="other_monthly_income" class="form-input currency-input" placeholder="e.g., 500">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Current Rent or Mortgage Payment</label>
+                            <input type="text" name="current_housing_payment" class="form-input currency-input" placeholder="e.g., 1500" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Total Monthly Debt Payments</label>
+                            <span class="form-helper">Car payments, student loans, credit cards, personal loans, etc.</span>
+                            <input type="text" name="total_monthly_debt" class="form-input currency-input" placeholder="e.g., 800" required>
+                        </div>
+
+                        <div class="nav-buttons">
+                            <button type="button" class="btn btn-back btn-prev">Back</button>
+                            <button type="button" class="btn btn-primary btn-next">Continue</button>
+                        </div>
+                    </div>
+
+                    <!-- Section 4: Assets -->
+                    <div class="card preapproval-section" data-section="4">
+                        <h2 class="section-title">Assets</h2>
+                        <p class="section-subtitle">Tell us about your savings and assets</p>
+
+                        <div class="form-group">
+                            <label class="form-label">Checking Account Balance</label>
+                            <input type="text" name="checking_balance" class="form-input currency-input" placeholder="e.g., 5000" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Savings Account Balance</label>
+                            <input type="text" name="savings_balance" class="form-input currency-input" placeholder="e.g., 15000" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Retirement Accounts (401k, IRA, etc.)</label>
+                            <input type="text" name="retirement_balance" class="form-input currency-input" placeholder="e.g., 50000">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Other Investments/Assets</label>
+                            <input type="text" name="other_assets" class="form-input currency-input" placeholder="e.g., 10000">
+                        </div>
+
+                        <div class="nav-buttons">
+                            <button type="button" class="btn btn-back btn-prev">Back</button>
+                            <button type="button" class="btn btn-primary btn-next">Continue</button>
+                        </div>
+                    </div>
+
+                    <!-- Section 5: Liabilities & History -->
+                    <div class="card preapproval-section" data-section="5">
+                        <h2 class="section-title">Financial History</h2>
+                        <p class="section-subtitle">A few questions about your financial history</p>
+
+                        <div class="form-group">
+                            <label class="form-label">Do you pay alimony or child support?</label>
+                            <select name="pays_alimony_child_support" class="form-select" required>
+                                <option value="">Select...</option>
+                                <option value="No">No</option>
+                                <option value="Yes - Alimony">Yes - Alimony</option>
+                                <option value="Yes - Child Support">Yes - Child Support</option>
+                                <option value="Yes - Both">Yes - Both</option>
+                            </select>
+                        </div>
+
+                        <div id="alimonyAmountSection" class="hidden">
+                            <div class="form-group">
+                                <label class="form-label">Monthly Alimony/Child Support Payment</label>
+                                <input type="text" name="alimony_child_support_amount" class="form-input currency-input" placeholder="e.g., 500">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Have you declared bankruptcy in the last 7 years?</label>
+                            <select name="bankruptcy_history" class="form-select" required>
+                                <option value="">Select...</option>
+                                <option value="No">No</option>
+                                <option value="Yes - Chapter 7">Yes - Chapter 7</option>
+                                <option value="Yes - Chapter 13">Yes - Chapter 13</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Have you had a foreclosure in the last 7 years?</label>
+                            <select name="foreclosure_history" class="form-select" required>
+                                <option value="">Select...</option>
+                                <option value="No">No</option>
+                                <option value="Yes">Yes</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Do you have any outstanding judgments or liens?</label>
+                            <select name="judgments_liens" class="form-select" required>
+                                <option value="">Select...</option>
+                                <option value="No">No</option>
+                                <option value="Yes">Yes</option>
+                            </select>
+                        </div>
+
+                        <div class="nav-buttons">
+                            <button type="button" class="btn btn-back btn-prev">Back</button>
+                            <button type="button" class="btn btn-primary btn-next">Continue</button>
+                        </div>
+                    </div>
+
+                    <!-- Section 6: Property Intent -->
+                    <div class="card preapproval-section" data-section="6">
+                        <h2 class="section-title">Property Information</h2>
+                        <p class="section-subtitle">Tell us about the home you're looking for</p>
+
+                        <div class="form-group">
+                            <label class="form-label">What type of property are you looking for?</label>
+                            <select name="property_type" class="form-select" required>
+                                <option value="">Select...</option>
+                                <option value="Single Family Home">Single Family Home</option>
+                                <option value="Townhouse">Townhouse</option>
+                                <option value="Condo">Condo</option>
+                                <option value="Multi-Unit (2-4 units)">Multi-Unit (2-4 units)</option>
+                                <option value="Manufactured Home">Manufactured Home</option>
+                                <option value="Not Sure Yet">Not Sure Yet</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">How will you use this property?</label>
+                            <select name="property_use" class="form-select" required>
+                                <option value="">Select...</option>
+                                <option value="Primary Residence">Primary Residence - I'll live there</option>
+                                <option value="Second Home">Second Home / Vacation Property</option>
+                                <option value="Investment Property">Investment Property - I'll rent it out</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Do you have a property in mind already?</label>
+                            <select name="has_property" class="form-select" required>
+                                <option value="">Select...</option>
+                                <option value="No - Still looking">No - Still looking</option>
+                                <option value="Yes - Under contract">Yes - Under contract</option>
+                                <option value="Yes - Making an offer soon">Yes - Making an offer soon</option>
+                            </select>
+                        </div>
+
+                        <div id="propertyAddressSection" class="hidden">
+                            <div class="form-group">
+                                <label class="form-label">Property Address</label>
+                                <input type="text" name="property_address" class="form-input" placeholder="Street, City, State, Zip">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Purchase Price</label>
+                                <input type="text" name="purchase_price" class="form-input currency-input" placeholder="e.g., 450000">
+                            </div>
+                        </div>
+
+                        <div class="nav-buttons">
+                            <button type="button" class="btn btn-back btn-prev">Back</button>
+                            <button type="button" class="btn btn-primary btn-next">Continue</button>
+                        </div>
+                    </div>
+
+                    <!-- Section 7: Document Upload -->
+                    <div class="card preapproval-section" data-section="7">
+                        <h2 class="section-title">Upload Documents</h2>
+                        <p class="section-subtitle">Please upload the following documents</p>
+
+                        <div class="info-box">
+                            <strong>Documents Needed:</strong>
+                            <ul style="margin: 10px 0 0 20px;">
+                                <li>Last 2 years of tax returns (W-2s included)</li>
+                                <li>Recent pay stubs (last 30 days)</li>
+                                <li>Bank statements (last 2 months)</li>
+                                <li>Photo ID (driver's license or passport)</li>
+                            </ul>
+                        </div>
+
+                        <div class="file-upload-group">
+                            <label class="form-label">Tax Returns & W-2s</label>
+                            <div class="file-input-wrapper" onclick="document.getElementById('tax_returns').click()">
+                                <div class="upload-icon">📄</div>
+                                <div class="upload-text">Click to upload or drag files here</div>
+                                <div class="file-names" id="tax_returns_names"></div>
+                                <input type="file" id="tax_returns" name="tax_returns" multiple accept=".pdf,.jpg,.png" onchange="updateFileNames(this, 'tax_returns_names')">
+                            </div>
+                        </div>
+
+                        <div class="file-upload-group">
+                            <label class="form-label">Pay Stubs</label>
+                            <div class="file-input-wrapper" onclick="document.getElementById('pay_stubs').click()">
+                                <div class="upload-icon">📄</div>
+                                <div class="upload-text">Click to upload or drag files here</div>
+                                <div class="file-names" id="pay_stubs_names"></div>
+                                <input type="file" id="pay_stubs" name="pay_stubs" multiple accept=".pdf,.jpg,.png" onchange="updateFileNames(this, 'pay_stubs_names')">
+                            </div>
+                        </div>
+
+                        <div class="file-upload-group">
+                            <label class="form-label">Bank Statements</label>
+                            <div class="file-input-wrapper" onclick="document.getElementById('bank_statements').click()">
+                                <div class="upload-icon">📄</div>
+                                <div class="upload-text">Click to upload or drag files here</div>
+                                <div class="file-names" id="bank_statements_names"></div>
+                                <input type="file" id="bank_statements" name="bank_statements" multiple accept=".pdf,.jpg,.png" onchange="updateFileNames(this, 'bank_statements_names')">
+                            </div>
+                        </div>
+
+                        <div class="file-upload-group">
+                            <label class="form-label">Photo ID</label>
+                            <div class="file-input-wrapper" onclick="document.getElementById('photo_id').click()">
+                                <div class="upload-icon">🪪</div>
+                                <div class="upload-text">Click to upload or drag files here</div>
+                                <div class="file-names" id="photo_id_names"></div>
+                                <input type="file" id="photo_id" name="id" accept=".pdf,.jpg,.png" onchange="updateFileNames(this, 'photo_id_names')">
+                            </div>
+                        </div>
+
+                        <div class="nav-buttons">
+                            <button type="button" class="btn btn-back btn-prev">Back</button>
+                            <button type="submit" class="btn btn-primary btn-large">Submit Application</button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
     </main>
 
     <%- include('../partials/footer') %>
+
+    <script>
+        var currentSection = 1;
+        var totalSections = 7;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Format currency inputs
+            var currencyInputs = document.querySelectorAll('.currency-input');
+            for (var c = 0; c < currencyInputs.length; c++) {
+                currencyInputs[c].addEventListener('blur', function(e) {
+                    var value = e.target.value.replace(/[^0-9]/g, '');
+                    if (value) {
+                        e.target.value = '$' + parseInt(value).toLocaleString();
+                    }
+                });
+            }
+
+            // Format phone inputs
+            var phoneInputs = document.querySelectorAll('.phone-input');
+            for (var p = 0; p < phoneInputs.length; p++) {
+                phoneInputs[p].addEventListener('input', function(e) {
+                    var value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 10) value = value.substring(0, 10);
+                    if (value.length >= 6) {
+                        e.target.value = '(' + value.substring(0, 3) + ') ' + value.substring(3, 6) + '-' + value.substring(6);
+                    } else if (value.length >= 3) {
+                        e.target.value = '(' + value.substring(0, 3) + ') ' + value.substring(3);
+                    }
+                });
+            }
+
+            // Show section 1
+            showSection(1);
+            updateProgress();
+
+            // Time at job change - show previous employer if < 2 years
+            var timeAtJobSelect = document.querySelector('[name="time_at_job"]');
+            if (timeAtJobSelect) {
+                timeAtJobSelect.addEventListener('change', function() {
+                    var prevSection = document.getElementById('previousEmployerSection');
+                    if (this.value === 'Less than 6 months' || this.value === '6 months - 1 year' || this.value === '1-2 years') {
+                        prevSection.classList.remove('hidden');
+                    } else {
+                        prevSection.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Alimony/child support change
+            var alimonySelect = document.querySelector('[name="pays_alimony_child_support"]');
+            if (alimonySelect) {
+                alimonySelect.addEventListener('change', function() {
+                    var amountSection = document.getElementById('alimonyAmountSection');
+                    if (this.value !== 'No' && this.value !== '') {
+                        amountSection.classList.remove('hidden');
+                    } else {
+                        amountSection.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Property in mind change
+            var hasPropertySelect = document.querySelector('[name="has_property"]');
+            if (hasPropertySelect) {
+                hasPropertySelect.addEventListener('change', function() {
+                    var addressSection = document.getElementById('propertyAddressSection');
+                    if (this.value === 'Yes - Under contract' || this.value === 'Yes - Making an offer soon') {
+                        addressSection.classList.remove('hidden');
+                    } else {
+                        addressSection.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Next buttons
+            var nextButtons = document.querySelectorAll('.btn-next');
+            for (var i = 0; i < nextButtons.length; i++) {
+                nextButtons[i].addEventListener('click', function(e) {
+                    e.preventDefault();
+                    nextSection();
+                });
+            }
+
+            // Back buttons
+            var prevButtons = document.querySelectorAll('.btn-prev');
+            for (var j = 0; j < prevButtons.length; j++) {
+                prevButtons[j].addEventListener('click', function(e) {
+                    e.preventDefault();
+                    prevSection();
+                });
+            }
+
+            // Form submit - show loading
+            var form = document.getElementById('preapprovalForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    var overlay = document.getElementById('loadingOverlay');
+                    if (overlay) {
+                        overlay.classList.add('active');
+                    }
+                });
+            }
+        });
+
+        function updateProgress() {
+            var steps = document.querySelectorAll('.progress-step');
+            for (var i = 0; i < steps.length; i++) {
+                var sectionNum = i + 1;
+                steps[i].classList.remove('active', 'complete');
+                if (sectionNum < currentSection) {
+                    steps[i].classList.add('complete');
+                } else if (sectionNum === currentSection) {
+                    steps[i].classList.add('active');
+                }
+            }
+        }
+
+        function showSection(sectionNum) {
+            var sections = document.querySelectorAll('.preapproval-section');
+            for (var i = 0; i < sections.length; i++) {
+                sections[i].style.display = 'none';
+                sections[i].classList.remove('active');
+            }
+
+            var targetSection = document.querySelector('.preapproval-section[data-section="' + sectionNum + '"]');
+            if (targetSection) {
+                targetSection.style.display = 'block';
+                targetSection.classList.add('active');
+                targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            currentSection = sectionNum;
+            updateProgress();
+        }
+
+        function validateCurrentSection() {
+            var section = document.querySelector('.preapproval-section[data-section="' + currentSection + '"]');
+            if (!section) return true;
+
+            var requiredInputs = section.querySelectorAll('[required]');
+            var valid = true;
+
+            for (var i = 0; i < requiredInputs.length; i++) {
+                var input = requiredInputs[i];
+                var value = input.value ? input.value.trim() : '';
+                if (!value || value === '') {
+                    valid = false;
+                    input.style.borderColor = 'red';
+                } else {
+                    input.style.borderColor = '';
+                }
+            }
+
+            if (!valid) {
+                alert('Please fill in all required fields before continuing.');
+            }
+
+            return valid;
+        }
+
+        function nextSection() {
+            if (!validateCurrentSection()) return;
+            if (currentSection < totalSections) {
+                showSection(currentSection + 1);
+            }
+        }
+
+        function prevSection() {
+            if (currentSection > 1) {
+                showSection(currentSection - 1);
+            }
+        }
+
+        function updateFileNames(input, displayId) {
+            var display = document.getElementById(displayId);
+            if (input.files.length > 0) {
+                var names = [];
+                for (var i = 0; i < input.files.length; i++) {
+                    names.push(input.files[i].name);
+                }
+                display.textContent = names.join(', ');
+            } else {
+                display.textContent = '';
+            }
+        }
+    </script>
 </body>
 </html>

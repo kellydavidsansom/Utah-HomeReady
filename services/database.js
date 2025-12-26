@@ -180,6 +180,53 @@ async function initDatabase() {
         db.run(`ALTER TABLE leads ADD COLUMN coborrower_credit_score_range TEXT`);
     } catch (e) { /* Column may already exist */ }
 
+    // Pre-approval form fields (migration for existing databases)
+    // Identity fields
+    try { db.run(`ALTER TABLE leads ADD COLUMN date_of_birth TEXT`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN citizenship_status TEXT`); } catch (e) {}
+
+    // Employment fields
+    try { db.run(`ALTER TABLE leads ADD COLUMN employer_name TEXT`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN employer_address TEXT`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN job_title TEXT`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN years_at_job TEXT`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN previous_employer_name TEXT`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN previous_employer_years TEXT`); } catch (e) {}
+
+    // Financial detail fields
+    try { db.run(`ALTER TABLE leads ADD COLUMN monthly_income REAL`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN other_income_amount REAL`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN other_income_source TEXT`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN current_housing_payment REAL`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN monthly_debt_amount REAL`); } catch (e) {}
+
+    // Asset fields
+    try { db.run(`ALTER TABLE leads ADD COLUMN checking_balance REAL`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN savings_balance REAL`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN retirement_balance REAL`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN other_assets_balance REAL`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN other_assets_description TEXT`); } catch (e) {}
+
+    // Liability and history fields
+    try { db.run(`ALTER TABLE leads ADD COLUMN pays_alimony_child_support TEXT`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN alimony_amount REAL`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN has_bankruptcy TEXT`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN bankruptcy_details TEXT`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN has_foreclosure TEXT`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN foreclosure_details TEXT`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN has_judgments_liens TEXT`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN judgments_details TEXT`); } catch (e) {}
+
+    // Property intent fields
+    try { db.run(`ALTER TABLE leads ADD COLUMN property_type TEXT`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN property_use TEXT`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN has_property_in_mind TEXT`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN property_address TEXT`); } catch (e) {}
+
+    // Pre-approval status
+    try { db.run(`ALTER TABLE leads ADD COLUMN preapproval_submitted INTEGER DEFAULT 0`); } catch (e) {}
+    try { db.run(`ALTER TABLE leads ADD COLUMN preapproval_submitted_at DATETIME`); } catch (e) {}
+
     saveDatabase();
     console.log('Database initialized successfully');
 }
