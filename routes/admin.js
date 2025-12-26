@@ -274,6 +274,16 @@ function generateMISMO(lead) {
         return map[timeAtAddress] || 12;
     };
 
+    const getEmploymentMonths = (yearsAtJob) => {
+        const map = {
+            'Less than 1 year': 6,
+            '1-2 years': 18,
+            '2-5 years': 42,
+            '5+ years': 72
+        };
+        return map[yearsAtJob] || 12;
+    };
+
     const mapEmploymentType = (type) => {
         const map = {
             'W-2 Employee (traditional job)': 'Current',
@@ -285,6 +295,36 @@ function generateMISMO(lead) {
         return map[type] || 'Other';
     };
 
+    const mapCitizenshipType = (status) => {
+        const map = {
+            'U.S. Citizen': 'USCitizen',
+            'Permanent Resident': 'PermanentResidentAlien',
+            'Non-Permanent Resident': 'NonPermanentResidentAlien',
+            'Other': 'Unknown'
+        };
+        return map[status] || 'Unknown';
+    };
+
+    const mapPropertyType = (type) => {
+        const map = {
+            'Single Family Home': 'SingleFamily',
+            'Townhouse': 'Townhouse',
+            'Condo': 'Condominium',
+            'Multi-Family (2-4 units)': 'TwoToFourUnitProperty',
+            'Manufactured Home': 'ManufacturedHousing'
+        };
+        return map[type] || 'SingleFamily';
+    };
+
+    const mapPropertyUse = (use) => {
+        const map = {
+            'Primary Residence': 'PrimaryResidence',
+            'Second Home': 'SecondHome',
+            'Investment Property': 'Investment'
+        };
+        return map[use] || 'PrimaryResidence';
+    };
+
     const debtMidpoints = {
         'Under $200': 100,
         '$200 - $499': 350,
@@ -294,6 +334,145 @@ function generateMISMO(lead) {
         '$1,800 - $2,499': 2150,
         '$2,500+': 3000
     };
+
+    // Calculate total monthly debt
+    const monthlyDebt = lead.monthly_debt_amount || debtMidpoints[lead.monthly_debt_payments] || 500;
+
+    // Build co-borrower section if applicable
+    let coborrowerSection = '';
+    if (lead.has_coborrower) {
+        coborrowerSection = `
+            <PARTY>
+              <INDIVIDUAL>
+                <NAME>
+                  <FirstName>${escapeXml(lead.coborrower_first_name)}</FirstName>
+                  <LastName>${escapeXml(lead.coborrower_last_name)}</LastName>
+                </NAME>
+              </INDIVIDUAL>
+              <ROLES>
+                <ROLE>
+                  <BORROWER>
+                    <CURRENT_INCOME>
+                      <CURRENT_INCOME_ITEMS>
+                        <CURRENT_INCOME_ITEM>
+                          <CURRENT_INCOME_ITEM_DETAIL>
+                            <CurrentIncomeMonthlyTotalAmount>${Math.round((lead.coborrower_gross_annual_income || 0) / 12)}</CurrentIncomeMonthlyTotalAmount>
+                            <IncomeType>Base</IncomeType>
+                          </CURRENT_INCOME_ITEM_DETAIL>
+                        </CURRENT_INCOME_ITEM>
+                      </CURRENT_INCOME_ITEMS>
+                    </CURRENT_INCOME>
+                  </BORROWER>
+                  <ROLE_DETAIL>
+                    <PartyRoleType>Borrower</PartyRoleType>
+                  </ROLE_DETAIL>
+                </ROLE>
+              </ROLES>
+              <CONTACT_POINTS>
+                <CONTACT_POINT>
+                  <CONTACT_POINT_EMAIL>
+                    <ContactPointEmailValue>${escapeXml(lead.coborrower_email)}</ContactPointEmailValue>
+                  </CONTACT_POINT_EMAIL>
+                </CONTACT_POINT>
+              </CONTACT_POINTS>
+            </PARTY>`;
+    }
+
+    // Build previous employer section if applicable
+    let previousEmployerSection = '';
+    if (lead.previous_employer_name) {
+        previousEmployerSection = `
+                      <EMPLOYER>
+                        <LEGAL_ENTITY>
+                          <LEGAL_ENTITY_DETAIL>
+                            <FullName>${escapeXml(lead.previous_employer_name)}</FullName>
+                          </LEGAL_ENTITY_DETAIL>
+                        </LEGAL_ENTITY>
+                        <EMPLOYMENT>
+                          <EmploymentStatusType>Previous</EmploymentStatusType>
+                          <EmploymentMonthsOnJobCount>${getEmploymentMonths(lead.previous_employer_years)}</EmploymentMonthsOnJobCount>
+                        </EMPLOYMENT>
+                      </EMPLOYER>`;
+    }
+
+    // Build subject property section if applicable
+    let subjectPropertySection = '';
+    if (lead.property_address || lead.property_type) {
+        subjectPropertySection = `
+          <COLLATERALS>
+            <COLLATERAL>
+              <SUBJECT_PROPERTY>
+                <ADDRESS>
+                  <AddressLineText>${escapeXml(lead.property_address || '')}</AddressLineText>
+                </ADDRESS>
+                <PROPERTY_DETAIL>
+                  <PropertyUsageType>${mapPropertyUse(lead.property_use)}</PropertyUsageType>
+                  <PropertyEstateType>FeeSimple</PropertyEstateType>
+                </PROPERTY_DETAIL>
+              </SUBJECT_PROPERTY>
+            </COLLATERAL>
+          </COLLATERALS>`;
+    }
+
+    // Build assets section
+    let assetsSection = `
+          <ASSETS>
+            <ASSET>
+              <ASSET_DETAIL>
+                <AssetType>CheckingAccount</AssetType>
+              </ASSET_DETAIL>
+              <ASSET_HOLDER>
+                <ASSET_HOLDER_DETAIL>
+                  <AssetCashOrMarketValueAmount>${lead.checking_balance || 0}</AssetCashOrMarketValueAmount>
+                </ASSET_HOLDER_DETAIL>
+              </ASSET_HOLDER>
+            </ASSET>
+            <ASSET>
+              <ASSET_DETAIL>
+                <AssetType>SavingsAccount</AssetType>
+              </ASSET_DETAIL>
+              <ASSET_HOLDER>
+                <ASSET_HOLDER_DETAIL>
+                  <AssetCashOrMarketValueAmount>${lead.savings_balance || lead.down_payment_saved || 0}</AssetCashOrMarketValueAmount>
+                </ASSET_HOLDER_DETAIL>
+              </ASSET_HOLDER>
+            </ASSET>
+            <ASSET>
+              <ASSET_DETAIL>
+                <AssetType>RetirementFund</AssetType>
+              </ASSET_DETAIL>
+              <ASSET_HOLDER>
+                <ASSET_HOLDER_DETAIL>
+                  <AssetCashOrMarketValueAmount>${lead.retirement_balance || 0}</AssetCashOrMarketValueAmount>
+                </ASSET_HOLDER_DETAIL>
+              </ASSET_HOLDER>
+            </ASSET>${lead.other_assets_balance ? `
+            <ASSET>
+              <ASSET_DETAIL>
+                <AssetType>Other</AssetType>
+                <AssetTypeOtherDescription>${escapeXml(lead.other_assets_description || 'Other Assets')}</AssetTypeOtherDescription>
+              </ASSET_DETAIL>
+              <ASSET_HOLDER>
+                <ASSET_HOLDER_DETAIL>
+                  <AssetCashOrMarketValueAmount>${lead.other_assets_balance}</AssetCashOrMarketValueAmount>
+                </ASSET_HOLDER_DETAIL>
+              </ASSET_HOLDER>
+            </ASSET>` : ''}
+          </ASSETS>`;
+
+    // Build liabilities section
+    let liabilitiesSection = `
+          <LIABILITIES>
+            <LIABILITY_SUMMARY>
+              <TotalMonthlyLiabilityPaymentAmount>${monthlyDebt}</TotalMonthlyLiabilityPaymentAmount>
+            </LIABILITY_SUMMARY>${lead.alimony_amount ? `
+            <LIABILITY>
+              <LIABILITY_DETAIL>
+                <LiabilityType>Alimony</LiabilityType>
+                <LiabilityMonthlyPaymentAmount>${lead.alimony_amount}</LiabilityMonthlyPaymentAmount>
+              </LIABILITY_DETAIL>
+            </LIABILITY>` : ''}
+          </LIABILITIES>`;
 
     return `<?xml version="1.0" encoding="UTF-8"?>
 <MESSAGE xmlns="http://www.mismo.org/residential/2009/schemas">
@@ -313,10 +492,40 @@ function generateMISMO(lead) {
                   <FirstName>${escapeXml(lead.first_name)}</FirstName>
                   <LastName>${escapeXml(lead.last_name)}</LastName>
                 </NAME>
+                <CONTACT_POINTS>
+                  <CONTACT_POINT>
+                    <CONTACT_POINT_EMAIL>
+                      <ContactPointEmailValue>${escapeXml(lead.email)}</ContactPointEmailValue>
+                    </CONTACT_POINT_EMAIL>
+                  </CONTACT_POINT>
+                  <CONTACT_POINT>
+                    <CONTACT_POINT_TELEPHONE>
+                      <ContactPointTelephoneValue>${escapeXml(lead.phone)}</ContactPointTelephoneValue>
+                    </CONTACT_POINT_TELEPHONE>
+                  </CONTACT_POINT>
+                </CONTACT_POINTS>
               </INDIVIDUAL>
               <ROLES>
                 <ROLE>
                   <BORROWER>
+                    <BORROWER_DETAIL>
+                      <BorrowerBirthDate>${escapeXml(lead.date_of_birth || '')}</BorrowerBirthDate>
+                      <CommunityPropertyStateResidentIndicator>false</CommunityPropertyStateResidentIndicator>
+                      <DependentCount>0</DependentCount>
+                      <SelfDeclaredMilitaryServiceIndicator>${lead.va_eligible === 'Yes' ? 'true' : 'false'}</SelfDeclaredMilitaryServiceIndicator>
+                    </BORROWER_DETAIL>
+                    <DECLARATION>
+                      <BankruptcyIndicator>${lead.has_bankruptcy === 'Yes' ? 'true' : 'false'}</BankruptcyIndicator>
+                      <CitizenshipResidencyType>${mapCitizenshipType(lead.citizenship_status)}</CitizenshipResidencyType>
+                      <FirstTimeHomebuyerIndicator>${lead.first_time_buyer && lead.first_time_buyer.includes('Yes') ? 'true' : 'false'}</FirstTimeHomebuyerIndicator>
+                      <HomeownerPastThreeYearsType>${lead.first_time_buyer && lead.first_time_buyer.includes('Yes') ? 'No' : 'Yes'}</HomeownerPastThreeYearsType>
+                      <IntentToOccupyType>${lead.property_use === 'Primary Residence' ? 'Yes' : 'No'}</IntentToOccupyType>
+                      <OutstandingJudgmentsIndicator>${lead.has_judgments_liens === 'Yes' ? 'true' : 'false'}</OutstandingJudgmentsIndicator>
+                      <PartyToLawsuitIndicator>false</PartyToLawsuitIndicator>
+                      <PresentlyDelinquentIndicator>false</PresentlyDelinquentIndicator>
+                      <PropertyForeclosedPastSevenYearsIndicator>${lead.has_foreclosure === 'Yes' ? 'true' : 'false'}</PropertyForeclosedPastSevenYearsIndicator>
+                      <AlimonyChildSupportObligationIndicator>${lead.pays_alimony_child_support === 'Yes' ? 'true' : 'false'}</AlimonyChildSupportObligationIndicator>
+                    </DECLARATION>
                     <RESIDENCES>
                       <RESIDENCE>
                         <ADDRESS>
@@ -331,54 +540,68 @@ function generateMISMO(lead) {
                         </RESIDENCE_DETAIL>
                       </RESIDENCE>
                     </RESIDENCES>
+                    <CURRENT_INCOME>
+                      <CURRENT_INCOME_ITEMS>
+                        <CURRENT_INCOME_ITEM>
+                          <CURRENT_INCOME_ITEM_DETAIL>
+                            <CurrentIncomeMonthlyTotalAmount>${lead.monthly_income || Math.round((lead.gross_annual_income || 0) / 12)}</CurrentIncomeMonthlyTotalAmount>
+                            <IncomeType>Base</IncomeType>
+                          </CURRENT_INCOME_ITEM_DETAIL>
+                        </CURRENT_INCOME_ITEM>${lead.other_income_amount ? `
+                        <CURRENT_INCOME_ITEM>
+                          <CURRENT_INCOME_ITEM_DETAIL>
+                            <CurrentIncomeMonthlyTotalAmount>${lead.other_income_amount}</CurrentIncomeMonthlyTotalAmount>
+                            <IncomeType>Other</IncomeType>
+                            <IncomeTypeOtherDescription>${escapeXml(lead.other_income_source || 'Other Income')}</IncomeTypeOtherDescription>
+                          </CURRENT_INCOME_ITEM_DETAIL>
+                        </CURRENT_INCOME_ITEM>` : ''}
+                      </CURRENT_INCOME_ITEMS>
+                    </CURRENT_INCOME>
                     <EMPLOYERS>
                       <EMPLOYER>
+                        <LEGAL_ENTITY>
+                          <LEGAL_ENTITY_DETAIL>
+                            <FullName>${escapeXml(lead.employer_name || '')}</FullName>
+                          </LEGAL_ENTITY_DETAIL>
+                          <CONTACTS>
+                            <CONTACT>
+                              <CONTACT_POINTS>
+                                <CONTACT_POINT>
+                                  <CONTACT_POINT_DETAIL>
+                                    <ContactPointRoleType>Work</ContactPointRoleType>
+                                  </CONTACT_POINT_DETAIL>
+                                </CONTACT_POINT>
+                              </CONTACT_POINTS>
+                            </CONTACT>
+                          </CONTACTS>
+                        </LEGAL_ENTITY>
+                        <ADDRESS>
+                          <AddressLineText>${escapeXml(lead.employer_address || '')}</AddressLineText>
+                        </ADDRESS>
                         <EMPLOYMENT>
                           <EmploymentStatusType>${mapEmploymentType(lead.employment_type)}</EmploymentStatusType>
+                          <EmploymentPositionDescription>${escapeXml(lead.job_title || '')}</EmploymentPositionDescription>
+                          <EmploymentMonthsOnJobCount>${getEmploymentMonths(lead.years_at_job)}</EmploymentMonthsOnJobCount>
                         </EMPLOYMENT>
-                      </EMPLOYER>
+                      </EMPLOYER>${previousEmployerSection}
                     </EMPLOYERS>
-                    <DECLARATION>
-                      <FirstTimeHomebuyerIndicator>${lead.first_time_buyer && lead.first_time_buyer.includes('Yes') ? 'true' : 'false'}</FirstTimeHomebuyerIndicator>
-                      <VeteranIndicator>${lead.va_eligible === 'Yes' ? 'true' : 'false'}</VeteranIndicator>
-                    </DECLARATION>
+                    <HOUSING_EXPENSES>
+                      <HOUSING_EXPENSE>
+                        <HousingExpensePaymentAmount>${lead.current_housing_payment || 0}</HousingExpensePaymentAmount>
+                        <HousingExpenseType>${lead.current_housing === 'Renting' ? 'Rent' : 'FirstMortgagePrincipalAndInterest'}</HousingExpenseType>
+                      </HOUSING_EXPENSE>
+                    </HOUSING_EXPENSES>
                   </BORROWER>
                   <ROLE_DETAIL>
                     <PartyRoleType>Borrower</PartyRoleType>
                   </ROLE_DETAIL>
                 </ROLE>
               </ROLES>
-              <CONTACT_POINTS>
-                <CONTACT_POINT>
-                  <CONTACT_POINT_EMAIL>
-                    <ContactPointEmailValue>${escapeXml(lead.email)}</ContactPointEmailValue>
-                  </CONTACT_POINT_EMAIL>
-                </CONTACT_POINT>
-                <CONTACT_POINT>
-                  <CONTACT_POINT_TELEPHONE>
-                    <ContactPointTelephoneValue>${escapeXml(lead.phone)}</ContactPointTelephoneValue>
-                  </CONTACT_POINT_TELEPHONE>
-                </CONTACT_POINT>
-              </CONTACT_POINTS>
-            </PARTY>
+            </PARTY>${coborrowerSection}
           </PARTIES>
-          <ASSETS>
-            <ASSET>
-              <ASSET_DETAIL>
-                <AssetType>SavingsAccount</AssetType>
-              </ASSET_DETAIL>
-              <OWNED_PROPERTY>
-                <OWNED_PROPERTY_DETAIL>
-                  <AssetCashOrMarketValueAmount>${lead.down_payment_saved || 0}</AssetCashOrMarketValueAmount>
-                </OWNED_PROPERTY_DETAIL>
-              </OWNED_PROPERTY>
-            </ASSET>
-          </ASSETS>
-          <LIABILITIES>
-            <LIABILITY_SUMMARY>
-              <TotalMonthlyLiabilityPaymentAmount>${debtMidpoints[lead.monthly_debt_payments] || 500}</TotalMonthlyLiabilityPaymentAmount>
-            </LIABILITY_SUMMARY>
-          </LIABILITIES>
+${assetsSection}
+${liabilitiesSection}
+${subjectPropertySection}
         </DEAL>
       </DEALS>
     </DEAL_SET>
